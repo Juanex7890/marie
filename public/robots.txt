@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://cojinesmarie.com
+
+# Sitemaps
+Sitemap: https://cojinesmarie.com/sitemap.xml
