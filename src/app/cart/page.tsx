@@ -81,7 +81,7 @@ export default function CartPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-green-light">Envío</span>
                   <span className="text-green font-medium">
-                    {totalPrice >= 50 ? 'Gratis' : formatPrice(5.99)}
+                    {totalPrice >= 50000 ? 'Gratis' : formatPrice(15000)}
                   </span>
                 </div>
                 
@@ -89,7 +89,7 @@ export default function CartPage() {
                   <div className="flex justify-between text-lg font-semibold">
                     <span className="text-green">Total</span>
                     <span className="text-green">
-                      {formatPrice(totalPrice + (totalPrice >= 50 ? 0 : 5.99))}
+                      {formatPrice(totalPrice + (totalPrice >= 50000 ? 0 : 15000))}
                     </span>
                   </div>
                 </div>
@@ -112,11 +112,11 @@ export default function CartPage() {
                 </Button>
               </div>
 
-              {totalPrice < 50 && (
+              {totalPrice < 50000 && (
                 <div className="mt-4 p-3 bg-gold/10 rounded-xl">
                   <p className="text-sm text-gold">
                     <Badge variant="new" className="mr-2">¡Envío gratis!</Badge>
-                    Añade {formatPrice(50 - totalPrice)} más para envío gratuito
+                    Añade {formatPrice(50000 - totalPrice)} más para envío gratuito
                   </p>
                 </div>
               )}
