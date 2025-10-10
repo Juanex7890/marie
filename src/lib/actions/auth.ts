@@ -18,6 +18,14 @@ export async function loginAdmin(data: AdminLoginData) {
       }
     }
 
+    // Debug information (remove in production)
+    console.log('Login attempt:', { 
+      providedEmail: email, 
+      expectedEmail: adminEmail,
+      emailMatch: email === adminEmail,
+      passwordMatch: password === adminPassword
+    })
+
     if (email === adminEmail && password === adminPassword) {
       await createAdminSession(email)
       return { success: true }
