@@ -8,8 +8,8 @@ export async function loginAdmin(data: AdminLoginData) {
     const validatedData = adminLoginSchema.parse(data)
     
     const { email, password } = validatedData
-    const adminEmail = process.env.ADMIN_EMAIL
-    const adminPassword = process.env.ADMIN_PASSWORD
+    const adminEmail = process.env.ADMIN_EMAIL?.trim()
+    const adminPassword = process.env.ADMIN_PASSWORD?.trim()
 
     if (!adminEmail || !adminPassword) {
       return {
