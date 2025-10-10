@@ -4,8 +4,6 @@ import './globals.css'
 import { CartProvider } from '@/components/cart/CartProvider'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { ConditionalHeader } from '@/components/layout/ConditionalHeader'
-import { ConditionalFooter } from '@/components/layout/ConditionalFooter'
 
 const inter = Inter({ 
   subsets: ['latin'],

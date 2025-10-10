@@ -31,7 +31,35 @@ export function debounce<T extends (...args: any[]) => any>(
   }
 }
 
-export function getImageUrl(filePath: string) {
+export function getImageUrl(filePath?: string | null) {
+  if (!filePath) {
+    return ''
+  }
+
+  const trimmedPath = filePath.trim()
+  if (!trimmedPath) {
+    return ''
+  }
+
+  // Return early when the path is already a fully-qualified or data URL
+  if (/^(?:https?:)?\/\//i.test(trimmedPath) || trimmedPath.startsWith('data:')) {
+    return trimmedPath
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  return `${supabaseUrl}/storage/v1/object/public/product-images/${filePath}`
+  if (!supabaseUrl) {
+    return trimmedPath
+  }
+
+  const sanitizedBase = supabaseUrl.replace(/\/+$/, '')
+  const normalizedPath = trimmedPath.replace(/^\/+/, '')
+
+  if (normalizedPath.startsWith('storage/v1/object/public/product-images/')) {
+    return `${sanitizedBase}/${normalizedPath}`
+  }
+
+  const withoutPublicPrefix = normalizedPath.replace(/^public\//, '')
+  const withoutBucket = withoutPublicPrefix.replace(/^product-images\//, '')
+
+  return `${sanitizedBase}/storage/v1/object/public/product-images/${withoutBucket}`
 }
