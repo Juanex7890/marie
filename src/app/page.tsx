@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { CategoryCard } from '@/components/catalog/CategoryCard'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
@@ -7,14 +6,6 @@ import { ArrowRight, Star } from 'lucide-react'
 
 export default async function HomePage() {
   const supabase = await createClient()
-
-  // Fetch featured categories
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('*')
-    .eq('active', true)
-    .order('position', { ascending: true })
-    .limit(6)
 
   // Fetch featured products (newest)
   const { data: featuredProducts } = await supabase
@@ -58,33 +49,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured Categories */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-serif font-bold text-green mb-4">
-              Nuestras Categorías
-            </h2>
-            <p className="text-lg text-green-light max-w-2xl mx-auto">
-              Explora nuestras colecciones cuidadosamente seleccionadas
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories?.map((category) => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
-          </div>
-          
-          <div className="text-center mt-12">
-            <Link href="/categorias">
-              <Button variant="outline" size="lg">
-                Ver Todas las Categorías
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Featured Products */}
       <section className="py-16 bg-linen">
