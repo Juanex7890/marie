@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { CategoryCard } from '@/components/catalog/CategoryCard'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { Button } from '@/components/ui/Button'
-import { Newsletter } from '@/components/Newsletter'
 import Link from 'next/link'
 import { ArrowRight, Star } from 'lucide-react'
 
@@ -115,23 +114,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="py-16 bg-green text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="space-y-6">
-            <h2 className="text-3xl font-serif font-bold">
-              Mantente al día
-            </h2>
-            <p className="text-green-light text-lg">
-              Recibe las últimas novedades y ofertas especiales directamente en tu correo
-            </p>
-            <Newsletter />
-            <p className="text-green-light text-sm">
-              No compartimos tu información. Cancela cuando quieras.
-            </p>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
