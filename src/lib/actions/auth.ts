@@ -23,7 +23,10 @@ export async function loginAdmin(data: AdminLoginData) {
       providedEmail: email, 
       expectedEmail: adminEmail,
       emailMatch: email === adminEmail,
-      passwordMatch: password === adminPassword
+      passwordMatch: password === adminPassword,
+      providedPasswordLength: password?.length,
+      expectedPasswordLength: adminPassword?.length,
+      passwordStartsWith: adminPassword ? password?.startsWith(adminPassword.substring(0, 3)) : false
     })
 
     if (email === adminEmail && password === adminPassword) {
