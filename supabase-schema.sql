@@ -23,6 +23,7 @@ CREATE TABLE products (
   price DECIMAL(10,2) NOT NULL CHECK (price > 0),
   compare_at_price DECIMAL(10,2) CHECK (compare_at_price > 0),
   active BOOLEAN NOT NULL DEFAULT true,
+  best_seller BOOLEAN NOT NULL DEFAULT false,
   category_id UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -44,6 +45,7 @@ CREATE INDEX idx_categories_position ON categories(position);
 
 CREATE INDEX idx_products_slug ON products(slug);
 CREATE INDEX idx_products_active ON products(active);
+CREATE INDEX idx_products_best_seller ON products(best_seller);
 CREATE INDEX idx_products_category_id ON products(category_id);
 CREATE INDEX idx_products_price ON products(price);
 CREATE INDEX idx_products_created_at ON products(created_at);
@@ -147,6 +149,7 @@ RETURNS TABLE (
   price DECIMAL(10,2),
   compare_at_price DECIMAL(10,2),
   active BOOLEAN,
+  best_seller BOOLEAN,
   category_id UUID,
   created_at TIMESTAMP WITH TIME ZONE,
   updated_at TIMESTAMP WITH TIME ZONE,

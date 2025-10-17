@@ -23,6 +23,12 @@ BEGIN
                    WHERE table_name = 'categories' AND column_name = 'position') THEN
         ALTER TABLE categories ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
     END IF;
+    
+    -- Add best_seller column to products if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'products' AND column_name = 'best_seller') THEN
+        ALTER TABLE products ADD COLUMN best_seller BOOLEAN NOT NULL DEFAULT false;
+    END IF;
 END $$;
 
 -- Create product_images table if it doesn't exist
@@ -41,6 +47,7 @@ CREATE INDEX IF NOT EXISTS idx_categories_position ON categories(position);
 
 CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
 CREATE INDEX IF NOT EXISTS idx_products_active ON products(active);
+CREATE INDEX IF NOT EXISTS idx_products_best_seller ON products(best_seller);
 CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
 CREATE INDEX IF NOT EXISTS idx_products_created_at ON products(created_at);

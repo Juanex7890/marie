@@ -12,6 +12,7 @@ export interface CreateProductData {
   price: number
   category_id: string
   active: boolean
+  best_seller: boolean
   compare_at_price?: number
 }
 
@@ -42,6 +43,7 @@ export async function createProduct(data: CreateProductData) {
         price: data.price,
         compare_at_price: data.compare_at_price,
         active: data.active,
+        best_seller: data.best_seller,
         category_id: data.category_id,
       })
       .select()
@@ -56,6 +58,7 @@ export async function createProduct(data: CreateProductData) {
     }
 
     revalidatePath('/admin/productos')
+    revalidatePath('/')
     return { success: true, product }
   } catch (error) {
     console.error('Error creating product:', error)
@@ -86,6 +89,7 @@ export async function updateProduct(data: UpdateProductData) {
         price: data.price,
         compare_at_price: data.compare_at_price,
         active: data.active,
+        best_seller: data.best_seller,
         category_id: data.category_id,
       })
       .eq('id', data.id)
@@ -99,6 +103,7 @@ export async function updateProduct(data: UpdateProductData) {
 
     revalidatePath('/admin/productos')
     revalidatePath(`/admin/productos/${data.id}`)
+    revalidatePath('/')
     return { success: true, product }
   } catch (error) {
     console.error('Error updating product:', error)

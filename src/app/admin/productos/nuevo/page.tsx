@@ -35,6 +35,7 @@ export default function NewProductPage() {
       price: '',
       category_id: '',
       active: true,
+      best_seller: false,
     }
   })
 
@@ -60,6 +61,7 @@ export default function NewProductPage() {
         price: parseFloat(data.price),
         category_id: data.category_id,
         active: data.active,
+        best_seller: data.best_seller,
       })
 
       if (!result.success) {
@@ -316,6 +318,16 @@ export default function NewProductPage() {
                   />
                   <label className="text-sm text-green">
                     Producto activo (visible en la tienda)
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    {...register('best_seller')}
+                    className="rounded border-gray-300 text-gold focus:ring-gold"
+                  />
+                  <label className="text-sm text-green">
+                    Mostrar en “Más Vendidos”
                   </label>
                 </div>
               </div>
