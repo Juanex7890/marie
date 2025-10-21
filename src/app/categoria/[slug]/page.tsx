@@ -181,7 +181,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                 <div className="space-y-6">
                   <div>
                     <h4 className="text-sm font-medium text-green mb-3">Buscar</h4>
-                    <SearchBar placeholder="Buscar en esta categoría..." />
+                    <SearchBar placeholder="Buscar en esta categoría..." mode="filters" />
                   </div>
                   <Filters
                     categories={categories || []}

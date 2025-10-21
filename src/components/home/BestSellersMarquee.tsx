@@ -38,14 +38,28 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
   const startAutoScrollRef = useRef<() => void>(() => {})
   const stopAutoScrollRef = useRef<() => void>(() => {})
 
-  const duplicatedProducts = useMemo(
-    () => (products.length ? [...products, ...products] : []),
-    [products]
-  )
+  const uniqueProducts = useMemo(() => {
+    const seen = new Map<string, Product>()
+    for (const product of products) {
+      if (!seen.has(product.id)) {
+        seen.set(product.id, product)
+      }
+    }
+    return Array.from(seen.values())
+  }, [products])
+
+  const marqueeProducts = useMemo(() => {
+    if (uniqueProducts.length > 1) {
+      return [...uniqueProducts, ...uniqueProducts]
+    }
+    return uniqueProducts
+  }, [uniqueProducts])
+
+  const shouldLoop = uniqueProducts.length > 1
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container || duplicatedProducts.length === 0) {
+    if (!container || !shouldLoop || marqueeProducts.length === 0) {
       startAutoScrollRef.current = () => {}
       stopAutoScrollRef.current = () => {}
       return
@@ -157,9 +171,13 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
       container.removeEventListener('wheel', handlePointerDown)
       container.removeEventListener('wheel', handlePointerUp)
     }
-  }, [duplicatedProducts])
+  }, [marqueeProducts, shouldLoop])
 
   const pauseAutoScroll = (delay = RESUME_DELAY) => {
+    if (!shouldLoop) {
+      return
+    }
+
     stopAutoScrollRef.current()
 
     if (resumeTimeoutRef.current) {
@@ -173,7 +191,7 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
 
   const handleArrowClick = (direction: 'left' | 'right') => {
     const container = containerRef.current
-    if (!container) {
+    if (!container || !shouldLoop) {
       return
     }
 
@@ -190,7 +208,7 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
     container.scrollBy({ left: scrollAmount, behavior: 'smooth' })
   }
 
-  if (!duplicatedProducts.length) {
+  if (!uniqueProducts.length) {
     return null
   }
 
@@ -212,40 +230,44 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
           role="list"
           aria-label="Productos más vendidos"
         >
-          {duplicatedProducts.map((product, index) => (
+          {marqueeProducts.map((product, index) => (
             <div
               key={`${product.id}-${index}`}
               data-card
               className="flex-shrink-0 w-[220px] sm:w-[260px] lg:w-[280px]"
               role="listitem"
-              aria-hidden={index >= products.length}
+              aria-hidden={index >= uniqueProducts.length}
             >
               <ProductCard product={product} />
             </div>
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={() => handleArrowClick('left')}
-          onMouseEnter={() => stopAutoScrollRef.current()}
-          onMouseLeave={() => pauseAutoScroll()}
-          className="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-sand bg-white/90 text-green shadow-soft transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-          aria-label="Ver productos anteriores"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
+        {shouldLoop && (
+          <>
+            <button
+              type="button"
+              onClick={() => handleArrowClick('left')}
+              onMouseEnter={() => stopAutoScrollRef.current()}
+              onMouseLeave={() => pauseAutoScroll()}
+              className="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-sand bg-white/90 text-green shadow-soft transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              aria-label="Ver productos anteriores"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
 
-        <button
-          type="button"
-          onClick={() => handleArrowClick('right')}
-          onMouseEnter={() => stopAutoScrollRef.current()}
-          onMouseLeave={() => pauseAutoScroll()}
-          className="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-sand bg-white/90 text-green shadow-soft transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-          aria-label="Ver productos siguientes"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
+            <button
+              type="button"
+              onClick={() => handleArrowClick('right')}
+              onMouseEnter={() => stopAutoScrollRef.current()}
+              onMouseLeave={() => pauseAutoScroll()}
+              className="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-sand bg-white/90 text-green shadow-soft transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              aria-label="Ver productos siguientes"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </>
+        )}
       </div>
     </div>
   )

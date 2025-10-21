@@ -31,9 +31,9 @@ export default function CartPage() {
                   Ver categorías
                 </Button>
               </Link>
-              <Link href="/busqueda">
+              <Link href="/">
                 <Button variant="outline" size="lg">
-                  Buscar productos
+                  Ver productos destacados
                 </Button>
               </Link>
             </div>

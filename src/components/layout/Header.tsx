@@ -99,7 +99,10 @@ export function Header() {
         onOpenChange={setSearchOpen}
         title="Buscar productos"
       >
-        <SearchBar placeholder="Buscar productos..." />
+        <SearchBar
+          placeholder="Buscar productos..."
+          onNavigate={() => setSearchOpen(false)}
+        />
       </Dialog>
     </header>
   )

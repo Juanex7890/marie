@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { ShoppingCart, Heart } from 'lucide-react'
+import { ShoppingCart } from 'lucide-react'
 import { getImageUrl, formatPrice } from '@/lib/utils'
 
 interface ProductImage {
@@ -68,16 +68,6 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           )}
         </div>
 
-        {/* Quick actions */}
-        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity space-y-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="bg-white/90 hover:bg-white shadow-soft"
-          >
-            <Heart className="h-4 w-4" />
-          </Button>
-        </div>
       </div>
 
       <div className="space-y-3">

@@ -3,7 +3,8 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { BestSellersMarquee } from '@/components/home/BestSellersMarquee'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Instagram } from 'lucide-react'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 import { getImageUrl } from '@/lib/utils'
 
 export default async function HomePage() {
@@ -52,11 +53,28 @@ export default async function HomePage() {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="/busqueda">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                  Buscar Productos
-                </Button>
-              </Link>
+            </div>
+            <div className="flex items-center justify-center gap-6 mt-6">
+            <a
+              href="https://wa.me/3166388242"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-green hover:text-gold transition-colors font-medium"
+              aria-label="Contactar por WhatsApp"
+            >
+              <WhatsAppIcon className="h-6 w-6" />
+              WhatsApp
+            </a>
+              <a
+                href="https://instagram.com/cojinesdecorativos_marie"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-green hover:text-gold transition-colors font-medium"
+                aria-label="Visitar Instagram"
+              >
+                <Instagram className="h-5 w-5" />
+                Instagram
+              </a>
             </div>
           </div>
         </div>
@@ -135,14 +153,6 @@ export default async function HomePage() {
               No hay productos disponibles por ahora.
             </p>
           )}
-
-          <div className="text-center mt-12">
-            <Link href="/busqueda">
-              <Button variant="outline" size="lg">
-                Ver Todos los Productos
-              </Button>
-            </Link>
-          </div>
         </div>
       </section>
     </div>

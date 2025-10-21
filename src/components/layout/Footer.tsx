@@ -1,11 +1,11 @@
-import Link from 'next/link'
 import { Instagram, Mail, Phone } from 'lucide-react'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
 export function Footer() {
   return (
     <footer className="bg-green text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -24,26 +24,20 @@ export function Footer() {
                 href="https://instagram.com/cojinesdecorativos_marie"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-green-light hover:text-gold transition-colors"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition hover:bg-gold/90"
+                aria-label="Instagram de Cojines Marie"
               >
                 <Instagram className="h-5 w-5" />
               </a>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Enlaces rápidos</h3>
-            <div className="space-y-2">
-              <Link href="/categorias" className="block text-green-light hover:text-gold transition-colors">
-                Categorías
-              </Link>
-              <Link href="/busqueda" className="block text-green-light hover:text-gold transition-colors">
-                Buscar productos
-              </Link>
-              <Link href="/contacto" className="block text-green-light hover:text-gold transition-colors">
-                Contacto
-              </Link>
+              <a
+                href="https://wa.me/34123456789"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center transition hover:scale-105"
+                aria-label="Contactar por WhatsApp"
+              >
+                <WhatsAppIcon className="h-10 w-10 drop-shadow-sm" />
+              </a>
             </div>
           </div>
 
@@ -57,7 +51,7 @@ export function Footer() {
               </div>
               <div className="flex items-center space-x-2 text-green-light">
                 <Phone className="h-4 w-4" />
-                <span className="text-sm">+34 123 456 789</span>
+                <span className="text-sm">+57 316 6388242</span>
               </div>
             </div>
           </div>

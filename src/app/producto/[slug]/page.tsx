@@ -6,7 +6,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, ShoppingCart, Heart, Share2 } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Share2 } from 'lucide-react'
 import { getImageUrl, formatPrice } from '@/lib/utils'
 
 interface PageProps {
@@ -187,10 +187,6 @@ export default async function ProductPage({ params }: PageProps) {
               <Button size="lg" className="flex-1">
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Añadir al carrito
-              </Button>
-              <Button variant="outline" size="lg">
-                <Heart className="h-5 w-5 mr-2" />
-                Favoritos
               </Button>
               <Button variant="ghost" size="lg">
                 <Share2 className="h-5 w-5" />
