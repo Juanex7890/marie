@@ -30,7 +30,7 @@ export function Footer() {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://wa.me/34123456789"
+                href="https://wa.me/316388242"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-10 w-10 items-center justify-center transition hover:scale-105"
@@ -46,10 +46,6 @@ export function Footer() {
             <h3 className="text-lg font-semibold">Contacto</h3>
             <div className="space-y-2">
               <div className="flex items-center space-x-2 text-green-light">
-                <Mail className="h-4 w-4" />
-                <span className="text-sm">hola@cojinesmarie.com</span>
-              </div>
-              <div className="flex items-center space-x-2 text-green-light">
                 <Phone className="h-4 w-4" />
                 <span className="text-sm">+57 316 6388242</span>
               </div>
@@ -59,7 +55,7 @@ export function Footer() {
 
         <div className="border-t border-green-light mt-8 pt-8 text-center">
           <p className="text-green-light text-sm">
-            © 2024 Cojines Marie. Todos los derechos reservados.
+            © 2025 Cojines Marie. Todos los derechos reservados.
           </p>
         </div>
       </div>
