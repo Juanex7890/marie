@@ -19,7 +19,7 @@ interface Product {
   slug: string
   description: string
   price: number
-  compare_at_price?: number
+  compare_at_price?: number | null
   active: boolean
   category_id: string
   images: ProductImage[]
