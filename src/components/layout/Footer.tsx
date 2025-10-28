@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Instagram, Mail, Phone } from 'lucide-react'
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
@@ -9,9 +10,14 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gold rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">M</span>
-              </div>
+              <Image
+                src="/images/marielogo.png"
+                alt="Cojines Marie"
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-lg object-contain"
+                priority
+              />
               <span className="text-xl font-serif font-semibold">
                 Cojines Marie
               </span>
