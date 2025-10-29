@@ -1,10 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
-import { Button } from '@/components/ui/Button'
 import { BestSellersMarquee } from '@/components/home/BestSellersMarquee'
 import Link from 'next/link'
-import { ArrowRight, Instagram } from 'lucide-react'
-import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
+import { Instagram } from 'lucide-react'
 import { getImageUrl } from '@/lib/utils'
 
 export default async function HomePage() {
@@ -35,36 +33,44 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-linen to-beige py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-20 overflow-hidden">
+        <Image
+          src="/images/heroback.jpg"
+          alt="Decoracion de cojines Marie"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-linen/95 via-beige/90 to-linen/96" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-8">
             <h1 className="text-4xl md:text-6xl font-serif font-bold text-green">
-              Almohadas Decorativas
-              <span className="block text-gold">Artesanales</span>
+              Cojines 
+              <span className="block text-gold">Decorativos</span>
             </h1>
             <p className="text-xl text-green-light max-w-2xl mx-auto">
-              Descubre nuestra colección única de cojines decorativos, servilletas de lino
-              y accesorios para el hogar. Cada pieza está hecha con amor y atención al detalle.
+              Descubre nuestra coleccion unica de cojines decorativos, servilletas de lino y
+              accesorios para el hogar. Cada pieza esta hecha con amor y atencion al detalle.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/categorias">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Ver Colección
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
             <div className="flex items-center justify-center gap-6 mt-6">
-            <a
-              href="https://wa.me/3166388242"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-green hover:text-gold transition-colors font-medium"
-              aria-label="Contactar por WhatsApp"
-            >
-              <WhatsAppIcon className="h-6 w-6" />
-              WhatsApp
-            </a>
+              <a
+                href="https://wa.me/3166388242"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-green hover:text-gold transition-colors font-medium"
+                aria-label="Contactar por WhatsApp"
+              >
+                <Image
+                  src="/images/whatsapp.png"
+                  alt="WhatsApp"
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 object-contain"
+                  priority
+                />
+                WhatsApp
+              </a>
               <a
                 href="https://instagram.com/cojinesdecorativos_marie"
                 target="_blank"
@@ -85,21 +91,17 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-serif font-bold text-green mb-4">
-              Decoración para el Hogar
+              Decoracion para el Hogar
             </h2>
             <p className="text-lg text-green-light max-w-2xl mx-auto">
-              Explora nuestras categorías y encuentra el estilo perfecto para tu espacio
+              Explora nuestras categorias y encuentra el estilo perfecto para tu espacio
             </p>
           </div>
 
           {homeCategories.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {homeCategories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/categoria/${category.slug}`}
-                  className="group"
-                >
+                <Link key={category.id} href={`/categoria/${category.slug}`} className="group">
                   <article className="overflow-hidden rounded-3xl bg-white shadow-soft transition-shadow duration-300 hover:shadow-soft-lg">
                     <div className="relative aspect-[4/3]">
                       {category.hero_image ? (
@@ -128,7 +130,7 @@ export default async function HomePage() {
             </div>
           ) : (
             <p className="text-center text-green-light">
-              No hay categorías disponibles por ahora.
+              No hay categorias disponibles por ahora.
             </p>
           )}
         </div>
@@ -139,7 +141,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-serif font-bold text-green mb-4">
-              Más Vendidos
+              Mas Vendidos
             </h2>
             <p className="text-lg text-green-light max-w-2xl mx-auto">
               Los productos favoritos de nuestros clientes
@@ -149,9 +151,7 @@ export default async function HomePage() {
           {bestSellers.length > 0 ? (
             <BestSellersMarquee products={bestSellers} />
           ) : (
-            <p className="text-center text-green-light">
-              No hay productos disponibles por ahora.
-            </p>
+            <p className="text-center text-green-light">No hay productos disponibles por ahora.</p>
           )}
         </div>
       </section>

@@ -1,187 +1,148 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Card } from '@/components/ui/Card'
-import { ArrowLeft, Upload, X, Save, Trash2 } from 'lucide-react'
+import { ArrowLeft, X, Save, Trash2 } from 'lucide-react'
 import { updateCategory, deleteCategory, getCategory } from '@/lib/actions/categories'
 
+type FormValues = {
+  name: string
+  description: string
+  slug: string
+  active: boolean
+  position: number
+  hero_image: string
+}
+
 export default function EditCategoryPage() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [isLoadingData, setIsLoadingData] = useState(true)
-  const [image, setImage] = useState<string | null>(null)
-  const [category, setCategory] = useState<any>(null)
   const [error, setError] = useState('')
   const router = useRouter()
   const params = useParams()
-  const categoryId = params.id
+  const categoryId = params.id as string
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    watch
-  } = useForm({
+    setValue,
+    watch,
+  } = useForm<FormValues>({
     defaultValues: {
       name: '',
       description: '',
       slug: '',
       active: true,
       position: 0,
-    }
+      hero_image: '',
+    },
   })
 
+  const heroImageUrl = watch('hero_image')
+
   useEffect(() => {
-    const fetchCategory = async () => {
+    const loadCategory = async () => {
       try {
         setIsLoadingData(true)
-        const result = await getCategory(categoryId as string)
+        const result = await getCategory(categoryId)
 
         if (result.success && result.category) {
-          setCategory(result.category)
-          setImage(result.category.hero_image)
+          const cat = result.category
           reset({
-            name: result.category.name,
-            description: result.category.description,
-            slug: result.category.slug,
-            position: result.category.position,
-            active: result.category.active,
+            name: cat.name,
+            description: cat.description ?? '',
+            slug: cat.slug,
+            active: cat.active,
+            position: cat.position,
+            hero_image: cat.hero_image ?? '',
           })
         } else {
-          setError(result.error || 'Error al cargar la categoría')
+          setError(result.error || 'Error al cargar la categoria')
         }
-      } catch (error) {
-        console.error('Error fetching category:', error)
-        setError('Error inesperado al cargar la categoría')
+      } catch (loadError) {
+        console.error('Error fetching category:', loadError)
+        setError('Error inesperado al cargar la categoria')
       } finally {
         setIsLoadingData(false)
       }
     }
 
     if (categoryId) {
-      fetchCategory()
+      loadCategory()
     }
   }, [categoryId, reset])
 
-  const onSubmit = async (data: any) => {
-    setIsLoading(true)
+  const onSubmit = async (data: FormValues) => {
+    setIsSaving(true)
     setError('')
-    
+
     try {
+      const heroImage = data.hero_image.trim()
       const result = await updateCategory({
-        id: categoryId as string,
+        id: categoryId,
         name: data.name,
         description: data.description,
         slug: data.slug,
         position: data.position || 0,
         active: data.active,
-        hero_image: image ?? undefined,
+        hero_image: heroImage ? heroImage : undefined,
       })
 
       if (result.success) {
         router.push('/admin/categorias')
       } else {
-        setError(result.error || 'Error al actualizar la categoría')
+        setError(result.error || 'Error al actualizar la categoria')
       }
-    } catch (error) {
-      console.error('Error updating category:', error)
-      setError('Error inesperado al actualizar la categoría')
+    } catch (submitError) {
+      console.error('Error updating category:', submitError)
+      setError('Error inesperado al actualizar la categoria')
     } finally {
-      setIsLoading(false)
+      setIsSaving(false)
     }
   }
 
   const handleDelete = async () => {
-    if (confirm('¿Estás seguro de que quieres eliminar esta categoría?')) {
-      try {
-        const result = await deleteCategory(categoryId as string)
-        if (result.success) {
-          router.push('/admin/categorias')
-        } else {
-          setError(result.error || 'Error al eliminar la categoría')
-        }
-      } catch (error) {
-        console.error('Error deleting category:', error)
-        setError('Error inesperado al eliminar la categoría')
+    if (!confirm('Estas seguro de eliminar esta categoria?')) {
+      return
+    }
+
+    try {
+      const result = await deleteCategory(categoryId)
+      if (result.success) {
+        router.push('/admin/categorias')
+      } else {
+        setError(result.error || 'Error al eliminar la categoria')
       }
+    } catch (deleteError) {
+      console.error('Error deleting category:', deleteError)
+      setError('Error inesperado al eliminar la categoria')
     }
-  }
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      // TODO: Implement image upload logic
-      const imageUrl = URL.createObjectURL(file)
-      setImage(imageUrl)
-    }
-  }
-
-  const removeImage = () => {
-    setImage(null)
   }
 
   if (isLoadingData) {
     return (
-      <div className="flex items-center justify-center min-h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold mx-auto mb-4"></div>
-          <p className="text-green-light">Cargando categoría...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!category) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">❌</div>
-        <h3 className="text-xl font-semibold text-green mb-2">
-          Categoría no encontrada
-        </h3>
-        <p className="text-green-light mb-6">
-          La categoría que buscas no existe o ha sido eliminada
-        </p>
-        <Button onClick={() => router.push('/admin/categorias')}>
-          Volver a Categorías
-        </Button>
+      <div className="flex min-h-screen items-center justify-center bg-linen">
+        <p className="text-green">Cargando categoria...</p>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="p-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-serif font-bold text-green">
-              Editar Categoría
-            </h1>
-            <p className="text-green-light">
-              Modifica la información de la categoría
-            </p>
-          </div>
-        </div>
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            onClick={handleDelete}
-            className="text-red-600 border-red-600 hover:bg-red-50"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Eliminar
-          </Button>
+      <div className="flex items-center space-x-4">
+        <Button variant="ghost" onClick={() => router.back()} className="p-2">
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div>
+          <h1 className="text-3xl font-serif font-bold text-green">Editar Categoria</h1>
+          <p className="text-green-light">Actualiza la informacion de esta categoria</p>
         </div>
       </div>
 
@@ -196,61 +157,47 @@ export default function EditCategoryPage() {
           {/* Main Form */}
           <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-green mb-4">
-                Información de la Categoría
-              </h3>
+              <h3 className="text-lg font-semibold text-green mb-4">Informacion de la Categoria</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-green mb-2">
-                    Nombre de la Categoría *
+                    Nombre de la Categoria *
                   </label>
                   <Input
                     {...register('name', { required: 'El nombre es obligatorio' })}
-                    placeholder="Ej: Cojines Decorativos"
                     className="w-full"
                   />
                   {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.name.message}
-                    </p>
+                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-green mb-2">
-                    Slug (URL) *
-                  </label>
+                  <label className="block text-sm font-medium text-green mb-2">Slug (URL) *</label>
                   <Input
                     {...register('slug', { required: 'El slug es obligatorio' })}
-                    placeholder="cojines-decorativos"
                     className="w-full"
                   />
                   <p className="text-sm text-green-light mt-1">
-                    Usado en la URL de la categoría. Debe ser único.
+                    Se usa en la URL publica e idealmente solo contiene letras, numeros y guiones.
                   </p>
                   {errors.slug && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.slug.message}
-                    </p>
+                    <p className="text-red-500 text-sm mt-1">{errors.slug.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-green mb-2">
-                    Descripción
-                  </label>
+                  <label className="block text-sm font-medium text-green mb-2">Descripcion</label>
                   <Textarea
                     {...register('description')}
-                    placeholder="Describe esta categoría..."
                     rows={3}
                     className="w-full"
+                    placeholder="Describe esta categoria..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-green mb-2">
-                    Posición
-                  </label>
+                  <label className="block text-sm font-medium text-green mb-2">Posicion</label>
                   <Input
                     {...register('position', { valueAsNumber: true })}
                     type="number"
@@ -258,7 +205,7 @@ export default function EditCategoryPage() {
                     className="w-full"
                   />
                   <p className="text-sm text-green-light mt-1">
-                    Orden de aparición en la lista de categorías (menor número = más arriba)
+                    Orden de aparicion en la lista de categorias (menor numero = mas arriba).
                   </p>
                 </div>
               </div>
@@ -266,46 +213,39 @@ export default function EditCategoryPage() {
 
             {/* Image */}
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-green mb-4">
-                Imagen de la Categoría
-              </h3>
+              <h3 className="text-lg font-semibold text-green mb-4">Imagen de la Categoria</h3>
               <div className="space-y-4">
-                {!image ? (
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-green-light mb-2">
-                      Arrastra una imagen aquí o haz clic para seleccionar
-                    </p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      id="image-upload"
-                    />
-                    <label
-                      htmlFor="image-upload"
-                      className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-green hover:bg-gray-50"
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Seleccionar Imagen
-                    </label>
-                  </div>
-                ) : (
+                <div>
+                  <label className="block text-sm font-medium text-green mb-2">URL de la imagen</label>
+                  <Input
+                    {...register('hero_image')}
+                    placeholder="https://mi-sitio.com/imagen.jpg"
+                    className="w-full"
+                  />
+                  <p className="text-sm text-green-light mt-1">
+                    Usa un enlace directo a la imagen que quieres mostrar para esta categoria.
+                  </p>
+                </div>
+
+                {heroImageUrl ? (
                   <div className="relative">
                     <img
-                      src={image}
-                      alt="Category preview"
+                      src={heroImageUrl}
+                      alt="Vista previa de la categoria"
                       className="w-full h-48 object-cover rounded-lg"
                     />
                     <button
                       type="button"
-                      onClick={removeImage}
+                      onClick={() => setValue('hero_image', '')}
                       className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                     >
                       <X className="h-3 w-3" />
                     </button>
                   </div>
+                ) : (
+                  <p className="text-sm text-green-light">
+                    Aun no hay una imagen asignada. Veras la vista previa cuando pegues un enlace.
+                  </p>
                 )}
               </div>
             </Card>
@@ -314,9 +254,7 @@ export default function EditCategoryPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-green mb-4">
-                Estado de la Categoría
-              </h3>
+              <h3 className="text-lg font-semibold text-green mb-4">Estado de la Categoria</h3>
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <input
@@ -325,24 +263,18 @@ export default function EditCategoryPage() {
                     className="rounded border-gray-300 text-gold focus:ring-gold"
                   />
                   <label className="text-sm text-green">
-                    Categoría activa (visible en la tienda)
+                    Categoria activa (visible en la tienda)
                   </label>
                 </div>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-green mb-4">
-                Acciones
-              </h3>
+              <h3 className="text-lg font-semibold text-green mb-4">Acciones</h3>
               <div className="space-y-3">
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full"
-                >
+                <Button type="submit" disabled={isSaving} className="w-full">
                   <Save className="h-4 w-4 mr-2" />
-                  {isLoading ? 'Guardando...' : 'Guardar Cambios'}
+                  {isSaving ? 'Guardando...' : 'Guardar Cambios'}
                 </Button>
                 <Button
                   type="button"
@@ -351,6 +283,15 @@ export default function EditCategoryPage() {
                   className="w-full"
                 >
                   Cancelar
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDelete}
+                  className="w-full"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Eliminar Categoria
                 </Button>
               </div>
             </Card>

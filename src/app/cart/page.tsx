@@ -3,12 +3,12 @@
 import { useMemo } from 'react'
 import { useCart } from '@/components/cart/CartProvider'
 import { CartItem } from '@/components/cart/CartItem'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
-import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
 export default function CartPage() {
   const { items, getTotalItems, getTotalPrice, clearCart } = useCart()
@@ -150,7 +150,14 @@ export default function CartPage() {
                   rel="noopener noreferrer"
                   className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#101828] px-8 py-4 text-lg font-medium text-white transition duration-200 hover:bg-[#0C1526]"
                 >
-                  <WhatsAppIcon className="h-6 w-6" />
+                  <Image
+                    src="/images/whatsapp.png"
+                    alt="WhatsApp"
+                    width={24}
+                    height={24}
+                    className="h-6 w-6 object-contain"
+                    priority
+                  />
                   Finalizar por WhatsApp
                 </a>
 

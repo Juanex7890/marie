@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import { Instagram, Mail, Phone } from 'lucide-react'
-import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
+import { Instagram, Phone } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -18,12 +17,10 @@ export function Footer() {
                 className="h-8 w-8 rounded-lg object-contain"
                 priority
               />
-              <span className="text-xl font-serif font-semibold">
-                Cojines Marie
-              </span>
+              <span className="text-xl font-serif font-semibold">Cojines Marie</span>
             </div>
             <p className="text-green-light text-sm">
-              Almohadas decorativas artesanales para hacer de tu hogar un lugar único y acogedor.
+              Almohadas decorativas artesanales para hacer de tu hogar un lugar unico y acogedor.
             </p>
             <div className="flex space-x-4">
               <a
@@ -42,7 +39,14 @@ export function Footer() {
                 className="flex h-10 w-10 items-center justify-center transition hover:scale-105"
                 aria-label="Contactar por WhatsApp"
               >
-                <WhatsAppIcon className="h-10 w-10 drop-shadow-sm" />
+                <Image
+                  src="/images/whatsapp.png"
+                  alt="WhatsApp"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 object-contain drop-shadow-sm"
+                  priority
+                />
               </a>
             </div>
           </div>
@@ -61,7 +65,7 @@ export function Footer() {
 
         <div className="border-t border-green-light mt-8 pt-8 text-center">
           <p className="text-green-light text-sm">
-            © 2025 Cojines Marie. Todos los derechos reservados.
+            (c) 2025 Cojines Marie. Todos los derechos reservados.
           </p>
         </div>
       </div>
