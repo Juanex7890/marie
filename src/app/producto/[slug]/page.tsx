@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, ShoppingCart, Share2 } from 'lucide-react'
+import { ShoppingCart, Share2 } from 'lucide-react'
 import { getImageUrl, formatPrice } from '@/lib/utils'
+import { ProductGallery } from '@/components/product/ProductGallery'
 
 interface PageProps {
   params: Promise<{
@@ -85,8 +85,6 @@ export default async function ProductPage({ params }: PageProps) {
     ? Math.round(((product.compare_at_price! - product.price) / product.compare_at_price!) * 100)
     : 0
 
-  const sortedImages = product.images?.sort((a: any, b: any) => a.position - b.position) || []
-
   return (
     <div className="min-h-screen bg-linen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -112,39 +110,7 @@ export default async function ProductPage({ params }: PageProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
-          <div className="space-y-4">
-            <div className="aspect-square relative overflow-hidden rounded-2xl bg-white shadow-soft">
-              {sortedImages[0] ? (
-                <Image
-                  src={getImageUrl(sortedImages[0].file_path)}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div className="w-full h-full bg-sand flex items-center justify-center">
-                  <span className="text-green/50 text-6xl">🛍️</span>
-                </div>
-              )}
-            </div>
-            
-            {sortedImages.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {sortedImages.slice(1, 5).map((image: any, index: number) => (
-                  <div key={image.id} className="aspect-square relative overflow-hidden rounded-lg bg-white shadow-soft">
-                    <Image
-                      src={getImageUrl(image.file_path)}
-                      alt={`${product.name} ${index + 2}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
+          <ProductGallery images={product.images ?? []} productName={product.name} />
           {/* Product Info */}
           <div className="space-y-6">
             <div>
@@ -206,7 +172,7 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-green-light">Envío:</span>
-                  <span className="text-green">Gratis en pedidos +50€</span>
+                  <span className="text-green">Se acuerda al momento de la compra</span>
                 </div>
               </div>
             </div>
@@ -236,3 +202,4 @@ export default async function ProductPage({ params }: PageProps) {
     </div>
   )
 }
+
