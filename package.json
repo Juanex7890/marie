@@ -21,6 +21,11 @@
     "react-hook-form": "^7.48.2",
     "zod": "^3.22.4"
   },
+  "overrides": {
+    "jwks-rsa": {
+      "jose": "^5.2.0"
+    }
+  },
   "devDependencies": {
     "@eslint/config-array": "^0.18.0",
     "@eslint/js": "^9.37.0",
