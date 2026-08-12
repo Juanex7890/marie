@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { Instagram } from 'lucide-react'
 import { getImageUrl } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const [categoryList, { products: bestSellerProducts }] = await Promise.all([
     getCategories(true),
