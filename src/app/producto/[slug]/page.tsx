@@ -57,11 +57,34 @@ export default async function ProductPage({ params }: PageProps) {
   const relatedProducts = relatedCandidates.filter((p) => p.id !== product.id).slice(0, 4)
 
   const isOnSale = product.compare_at_price && product.compare_at_price > product.price
-  const discountPercentage = isOnSale 
+  const discountPercentage = isOnSale
     ? Math.round(((product.compare_at_price! - product.price) / product.compare_at_price!) * 100)
     : 0
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mariedecoracion.com'
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: (product.images ?? []).map((img) => getImageUrl(img.file_path)),
+    url: `${baseUrl}/producto/${product.slug}`,
+    category: product.categories?.name,
+    offers: {
+      '@type': 'Offer',
+      url: `${baseUrl}/producto/${product.slug}`,
+      priceCurrency: 'COP',
+      price: product.price,
+      availability: 'https://schema.org/InStock',
+    },
+  }
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+    />
     <div className="min-h-screen bg-linen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
@@ -176,6 +199,7 @@ export default async function ProductPage({ params }: PageProps) {
         )}
       </div>
     </div>
+    </>
   )
 }
 

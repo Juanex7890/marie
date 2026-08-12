@@ -4,7 +4,7 @@ import { getCategories, getProducts } from '@/lib/firebase/db'
 export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cojinesmarie.com'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mariedecoracion.com'
 
   // Static pages
   const staticPages = [
@@ -19,12 +19,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/cart`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
     },
   ]
 

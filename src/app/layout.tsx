@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://cojinesmarie.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mariedecoracion.com'),
   alternates: {
     canonical: '/',
   },
@@ -71,6 +71,23 @@ export const metadata: Metadata = {
   },
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mariedecoracion.com'
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Cojines Marie',
+  url: baseUrl,
+  logo: `${baseUrl}/images/marielogo.png`,
+}
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Cojines Marie',
+  url: baseUrl,
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -79,6 +96,14 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-linen">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <CartProvider>
           <div className="flex flex-col min-h-screen">
             <Header />

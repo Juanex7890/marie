@@ -40,78 +40,73 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
 
   return (
     <div className="group card hover:scale-105 transition-all duration-300">
-      <div className="aspect-square relative overflow-hidden rounded-xl mb-4">
-        {mainImage ? (
-          <Image
-            src={getImageUrl(mainImage.file_path)}
-            alt={product.name}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full bg-sand flex items-center justify-center">
-            <span className="text-green/50 text-4xl">🛍️</span>
+      <Link href={`/producto/${product.slug}`} className="block">
+        <div className="aspect-square relative overflow-hidden rounded-xl mb-4">
+          {mainImage ? (
+            <Image
+              src={getImageUrl(mainImage.file_path)}
+              alt={product.name}
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full bg-sand flex items-center justify-center">
+              <span className="text-green/50 text-4xl">🛍️</span>
+            </div>
+          )}
+
+          {/* Badges */}
+          <div className="absolute top-3 left-3 space-y-2">
+            {isOnSale && (
+              <Badge variant="sale">
+                -{discountPercentage}%
+              </Badge>
+            )}
+            {new Date(product.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
+              <Badge variant="new">
+                Nuevo
+              </Badge>
+            )}
           </div>
-        )}
-        
-        {/* Badges */}
-        <div className="absolute top-3 left-3 space-y-2">
-          {isOnSale && (
-            <Badge variant="sale">
-              -{discountPercentage}%
-            </Badge>
-          )}
-          {new Date(product.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
-            <Badge variant="new">
-              Nuevo
-            </Badge>
-          )}
+
         </div>
 
-      </div>
+        <div className="space-y-3">
+          <div>
+            <h3 className="text-lg font-semibold text-green group-hover:text-gold transition-colors line-clamp-2">
+              {product.name}
+            </h3>
+            <p className="text-gray-600 text-sm line-clamp-2 mt-1">
+              {product.description}
+            </p>
+          </div>
 
-      <div className="space-y-3">
-        <div>
-          <h3 className="text-lg font-semibold text-green group-hover:text-gold transition-colors line-clamp-2">
-            {product.name}
-          </h3>
-          <p className="text-gray-600 text-sm line-clamp-2 mt-1">
-            {product.description}
-          </p>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <span className="text-xl font-bold text-green">
-                {formatPrice(product.price)}
-              </span>
-              {isOnSale && (
-                <span className="text-sm text-gray-500 line-through">
-                  {formatPrice(product.compare_at_price!)}
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2">
+                <span className="text-xl font-bold text-green">
+                  {formatPrice(product.price)}
                 </span>
-              )}
+                {isOnSale && (
+                  <span className="text-sm text-gray-500 line-through">
+                    {formatPrice(product.compare_at_price!)}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
+      </Link>
 
-        <div className="flex space-x-2">
-          <Button
-            variant="primary"
-            size="sm"
-            className="flex-1"
-            onClick={() => onAddToCart?.(product)}
-          >
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Añadir
-          </Button>
-          <Link href={`/producto/${product.slug}`}>
-            <Button variant="outline" size="sm">
-              Ver
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <Button
+        variant="primary"
+        size="sm"
+        className="w-full mt-3"
+        onClick={() => onAddToCart?.(product)}
+      >
+        <ShoppingCart className="h-4 w-4 mr-2" />
+        Añadir
+      </Button>
     </div>
   )
 }
