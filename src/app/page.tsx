@@ -1,0 +1,144 @@
+import { getCategories, getProducts } from '@/lib/firebase/db'
+import Image from 'next/image'
+import { BestSellersMarquee } from '@/components/home/BestSellersMarquee'
+import Link from 'next/link'
+import { Instagram } from 'lucide-react'
+import { getImageUrl } from '@/lib/utils'
+
+export default async function HomePage() {
+  const [categoryList, { products: bestSellerProducts }] = await Promise.all([
+    getCategories(true),
+    getProducts({ activeOnly: true, bestSeller: true, sort: 'latest', limit: 12 }),
+  ])
+
+  const homeCategories = categoryList.slice(0, 8)
+  const bestSellers = bestSellerProducts
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative py-20 overflow-hidden">
+        <Image
+          src="/images/heroback.jpg"
+          alt="Decoracion de cojines Marie"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-linen/95 via-beige/90 to-linen/96" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-8">
+            <h1 className="text-4xl md:text-6xl font-serif font-bold text-green">
+              Cojines 
+              <span className="block text-gold">Decorativos</span>
+            </h1>
+            <p className="text-xl text-green-light max-w-2xl mx-auto">
+              Descubre nuestra coleccion unica de cojines decorativos, servilletas de lino y
+              accesorios para el hogar. Cada pieza esta hecha con amor y atencion al detalle.
+            </p>
+            <div className="flex items-center justify-center gap-6 mt-6">
+              <a
+                href="https://wa.me/3166388242"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-green hover:text-gold transition-colors font-medium"
+                aria-label="Contactar por WhatsApp"
+              >
+                <Image
+                  src="/images/whatsapp.png"
+                  alt="WhatsApp"
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 object-contain"
+                  priority
+                />
+                WhatsApp
+              </a>
+              <a
+                href="https://instagram.com/cojinesdecorativos_marie"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-green hover:text-gold transition-colors font-medium"
+                aria-label="Visitar Instagram"
+              >
+                <Instagram className="h-5 w-5" />
+                Instagram
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-serif font-bold text-green mb-4">
+              Decoracion para el Hogar
+            </h2>
+            <p className="text-lg text-green-light max-w-2xl mx-auto">
+              Explora nuestras categorias y encuentra el estilo perfecto para tu espacio
+            </p>
+          </div>
+
+          {homeCategories.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {homeCategories.map((category) => (
+                <Link key={category.id} href={`/categoria/${category.slug}`} className="group">
+                  <article className="overflow-hidden rounded-3xl bg-white shadow-soft transition-shadow duration-300 hover:shadow-soft-lg">
+                    <div className="relative aspect-[4/3]">
+                      {category.hero_image ? (
+                        <Image
+                          src={getImageUrl(category.hero_image)}
+                          alt={category.name}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-sand/40 text-green/50">
+                          <span className="text-sm">Sin imagen</span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    </div>
+                    <div className="px-4 py-4 text-center">
+                      <h3 className="text-sm font-semibold uppercase tracking-wide text-green">
+                        {category.name}
+                      </h3>
+                    </div>
+                  </article>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-green-light">
+              No hay categorias disponibles por ahora.
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-16 bg-linen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-serif font-bold text-green mb-4">
+              Mas Vendidos
+            </h2>
+            <p className="text-lg text-green-light max-w-2xl mx-auto">
+              Los productos favoritos de nuestros clientes
+            </p>
+          </div>
+
+          {bestSellers.length > 0 ? (
+            <BestSellersMarquee products={bestSellers} />
+          ) : (
+            <p className="text-center text-green-light">No hay productos disponibles por ahora.</p>
+          )}
+        </div>
+      </section>
+    </div>
+  )
+}
