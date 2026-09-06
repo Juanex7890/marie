@@ -33,6 +33,7 @@ export default function NewProductPage() {
       name: '',
       description: '',
       price: '',
+      compare_at_price: '',
       category_id: '',
       active: true,
       best_seller: false,
@@ -59,6 +60,7 @@ export default function NewProductPage() {
         name: data.name,
         description: data.description,
         price: parseFloat(data.price),
+        compare_at_price: data.compare_at_price ? parseFloat(data.compare_at_price) : undefined,
         category_id: data.category_id,
         active: data.active,
         best_seller: data.best_seller,
@@ -199,13 +201,13 @@ export default function NewProductPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-green mb-2">
-                      Precio (€) *
+                      Precio (COP) *
                     </label>
                     <Input
                       {...register('price', { required: 'El precio es obligatorio' })}
                       type="number"
-                      step="0.01"
-                      placeholder="29.99"
+                      step="1"
+                      placeholder="29990"
                       className="w-full"
                     />
                     {errors.price && (
@@ -213,6 +215,22 @@ export default function NewProductPage() {
                         {errors.price.message}
                       </p>
                     )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-green mb-2">
+                      Precio Original / Antes de Descuento (COP)
+                    </label>
+                    <Input
+                      {...register('compare_at_price')}
+                      type="number"
+                      step="1"
+                      placeholder="39990"
+                      className="w-full"
+                    />
+                    <p className="text-xs text-green-light mt-1">
+                      Opcional. Debe ser mayor al precio actual para mostrar un descuento.
+                    </p>
                   </div>
 
                   <div>
