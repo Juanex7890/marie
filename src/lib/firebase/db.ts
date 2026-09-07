@@ -22,10 +22,13 @@ export async function getCategories(activeOnly = false): Promise<Category[]> {
 }
 
 export async function getCategoryById(id: string) { const doc = await firestore().collection('categories').doc(id).get(); return doc.exists ? data<Category>(doc) : null }
+
+const normalizeSlug = (value: string) => value.normalize('NFC').trim().toLowerCase()
+
 export async function getCategoryBySlug(slug: string, activeOnly = false) {
-  const snapshot = await firestore().collection('categories').where('slug', '==', slug).limit(1).get()
-  const category = snapshot.empty ? null : data<Category>(snapshot.docs[0])
-  return category && (!activeOnly || category.active) ? category : null
+  const target = normalizeSlug(slug)
+  const categories = await getCategories(activeOnly)
+  return categories.find(c => normalizeSlug(c.slug) === target) ?? null
 }
 
 async function imagesFor(productIds: string[]) {
