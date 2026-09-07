@@ -11,6 +11,8 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { getImageUrl } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: Promise<{
     slug: string

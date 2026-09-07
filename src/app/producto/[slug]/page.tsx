@@ -9,6 +9,8 @@ import { ShoppingCart, Share2 } from 'lucide-react'
 import { getImageUrl, formatPrice } from '@/lib/utils'
 import { ProductGallery } from '@/components/product/ProductGallery'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: Promise<{
     slug: string
