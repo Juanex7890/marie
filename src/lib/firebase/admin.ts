@@ -19,8 +19,11 @@ function getServiceAccount(): ServiceAccount {
 }
 
 export function getFirebaseAdminApp(): App {
+  const existing = getApps()[0]
+  if (existing) return existing
+
   const serviceAccount = getServiceAccount()
-  return getApps()[0] ?? initializeApp({
+  const app = initializeApp({
     credential: cert({
       projectId: serviceAccount.project_id,
       clientEmail: serviceAccount.client_email,
@@ -28,6 +31,12 @@ export function getFirebaseAdminApp(): App {
     }),
     storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   })
+
+  // Optional fields (e.g. hero_image) are passed through as `undefined` when
+  // left blank; without this, Firestore throws instead of omitting them.
+  getFirestore(app).settings({ ignoreUndefinedProperties: true })
+
+  return app
 }
 
 export const firebaseAuth = () => getAuth(getFirebaseAdminApp())
