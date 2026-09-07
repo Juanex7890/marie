@@ -152,7 +152,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                   </div>
                   <Filters
                     categories={categories || []}
-                    selectedCategory={searchParamsResolved.category}
+                    selectedCategory={slug}
                     sortBy={searchParamsResolved.sort}
                   />
                 </div>

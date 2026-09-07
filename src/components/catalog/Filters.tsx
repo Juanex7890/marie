@@ -24,14 +24,15 @@ function FiltersContent({ categories, selectedCategory, sortBy }: FiltersProps) 
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   const handleCategoryChange = (categorySlug: string) => {
-    const params = new URLSearchParams(searchParams)
-    if (categorySlug === selectedCategory) {
-      params.delete('category')
-    } else {
-      params.set('category', categorySlug)
+    if (!categorySlug) {
+      router.push('/categorias')
+      return
     }
+    const params = new URLSearchParams(searchParams)
+    params.delete('category')
     params.delete('page')
-    router.push(`?${params.toString()}`)
+    const queryString = params.toString()
+    router.push(`/categoria/${categorySlug}${queryString ? `?${queryString}` : ''}`)
   }
 
   const handleSortChange = (sort: string) => {
@@ -46,11 +47,7 @@ function FiltersContent({ categories, selectedCategory, sortBy }: FiltersProps) 
   }
 
   const clearFilters = () => {
-    const params = new URLSearchParams(searchParams)
-    params.delete('category')
-    params.delete('sort')
-    params.delete('page')
-    router.push(`?${params.toString()}`)
+    router.push('/categorias')
   }
 
   const hasActiveFilters = selectedCategory || (sortBy && sortBy !== 'latest')
