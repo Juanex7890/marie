@@ -90,7 +90,7 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-linen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-serif font-bold text-green mb-2">
             Tu carrito

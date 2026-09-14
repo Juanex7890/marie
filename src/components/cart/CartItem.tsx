@@ -26,36 +26,38 @@ export function CartItem({ item }: CartItemProps) {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-5 sm:p-6 bg-white rounded-2xl shadow-soft">
-      <Link href={`/producto/${item.slug}`} className="flex-shrink-0 self-center sm:self-auto">
-        <div className="w-28 h-28 sm:w-32 sm:h-32 relative overflow-hidden rounded-xl">
-          {item.image ? (
-            <Image
-              src={getImageUrl(item.image)}
-              alt={item.name}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-sand flex items-center justify-center">
-              <span className="text-green/50 text-3xl">🛍️</span>
-            </div>
-          )}
-        </div>
-      </Link>
-
-      <div className="flex-1 min-w-0 text-center sm:text-left">
-        <Link href={`/producto/${item.slug}`}>
-          <h3 className="text-lg sm:text-xl font-semibold text-green hover:text-gold transition-colors line-clamp-2">
-            {item.name}
-          </h3>
+    <div className="flex flex-col gap-5 p-5 sm:p-6 bg-white rounded-2xl shadow-soft">
+      <div className="flex items-start gap-5">
+        <Link href={`/producto/${item.slug}`} className="flex-shrink-0">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 relative overflow-hidden rounded-xl">
+            {item.image ? (
+              <Image
+                src={getImageUrl(item.image)}
+                alt={item.name}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-sand flex items-center justify-center">
+                <span className="text-green/50 text-3xl">🛍️</span>
+              </div>
+            )}
+          </div>
         </Link>
-        <p className="text-base text-gray-600 mt-1">
-          {formatPrice(item.price)}
-        </p>
+
+        <div className="flex-1 min-w-0">
+          <Link href={`/producto/${item.slug}`}>
+            <h3 className="text-lg sm:text-xl font-semibold text-green hover:text-gold transition-colors line-clamp-2">
+              {item.name}
+            </h3>
+          </Link>
+          <p className="text-base text-gray-600 mt-1">
+            {formatPrice(item.price)}
+          </p>
+        </div>
       </div>
 
-      <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
+      <div className="flex items-center justify-between gap-4 border-t border-sand pt-4">
         <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
@@ -78,20 +80,20 @@ export function CartItem({ item }: CartItemProps) {
           </Button>
         </div>
 
-        <div className="text-right min-w-[100px]">
+        <div className="flex items-center gap-4">
           <p className="text-lg font-semibold text-green">
             {formatPrice(item.price * item.quantity)}
           </p>
-        </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => removeItem(item.id)}
-          className="h-10 w-10 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
-        >
-          <Trash2 className="h-5 w-5" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => removeItem(item.id)}
+            className="h-10 w-10 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+          >
+            <Trash2 className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
     </div>
   )
