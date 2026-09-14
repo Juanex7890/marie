@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ShoppingCart } from 'lucide-react'
 import { getImageUrl, formatPrice } from '@/lib/utils'
+import { useCart } from '@/components/cart/CartProvider'
 
 interface ProductImage {
   id: string
@@ -32,6 +33,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
+  const { addItem } = useCart()
   const mainImage = product.images.find(img => img.position === 0) || product.images[0]
   const isOnSale = product.compare_at_price && product.compare_at_price > product.price
   const discountPercentage = isOnSale 
@@ -102,7 +104,10 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         variant="primary"
         size="sm"
         className="w-full mt-3"
-        onClick={() => onAddToCart?.(product)}
+        onClick={() => {
+          addItem(product)
+          onAddToCart?.(product)
+        }}
       >
         <ShoppingCart className="h-4 w-4 mr-2" />
         Añadir
