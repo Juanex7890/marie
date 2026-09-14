@@ -57,7 +57,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   return (
     <>
       <div className="space-y-4">
-        <div className="relative aspect-square overflow-hidden rounded-2xl bg-white shadow-soft">
+        <div
+          id="product-gallery-main-image"
+          className="relative aspect-square overflow-hidden rounded-2xl bg-white shadow-soft"
+        >
           {orderedImages.map((image, index) => (
             <Image
               key={image.id}

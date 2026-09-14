@@ -5,9 +5,10 @@ import { Badge } from '@/components/ui/Badge'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ShoppingCart, Share2 } from 'lucide-react'
+import { Share2 } from 'lucide-react'
 import { getImageUrl, formatPrice } from '@/lib/utils'
 import { ProductGallery } from '@/components/product/ProductGallery'
+import { AddToCartButton } from '@/components/product/AddToCartButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -151,10 +152,7 @@ export default async function ProductPage({ params }: PageProps) {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="flex-1">
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Añadir al carrito
-              </Button>
+              <AddToCartButton product={product} />
               <Button variant="ghost" size="lg">
                 <Share2 className="h-5 w-5" />
               </Button>

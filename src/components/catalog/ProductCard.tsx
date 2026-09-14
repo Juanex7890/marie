@@ -1,5 +1,6 @@
 'use client'
 
+import { useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { ShoppingCart } from 'lucide-react'
 import { getImageUrl, formatPrice } from '@/lib/utils'
 import { useCart } from '@/components/cart/CartProvider'
+import { useFlyToCart } from '@/components/cart/FlyToCartProvider'
 
 interface ProductImage {
   id: string
@@ -34,6 +36,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const { addItem } = useCart()
+  const { flyToCart } = useFlyToCart()
+  const imageRef = useRef<HTMLDivElement>(null)
   const mainImage = product.images.find(img => img.position === 0) || product.images[0]
   const isOnSale = product.compare_at_price && product.compare_at_price > product.price
   const discountPercentage = isOnSale 
@@ -43,7 +47,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   return (
     <div className="group card hover:scale-105 transition-all duration-300">
       <Link href={`/producto/${product.slug}`} className="block">
-        <div className="aspect-square relative overflow-hidden rounded-xl mb-4">
+        <div ref={imageRef} className="aspect-square relative overflow-hidden rounded-xl mb-4">
           {mainImage ? (
             <Image
               src={getImageUrl(mainImage.file_path)}
@@ -105,6 +109,9 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         size="sm"
         className="w-full mt-3"
         onClick={() => {
+          if (imageRef.current && mainImage) {
+            flyToCart(imageRef.current, getImageUrl(mainImage.file_path))
+          }
           addItem(product)
           onAddToCart?.(product)
         }}

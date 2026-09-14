@@ -26,9 +26,9 @@ export function CartItem({ item }: CartItemProps) {
   }
 
   return (
-    <div className="flex items-center space-x-4 p-4 bg-white rounded-xl shadow-soft">
-      <Link href={`/producto/${item.slug}`} className="flex-shrink-0">
-        <div className="w-16 h-16 relative overflow-hidden rounded-lg">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-5 sm:p-6 bg-white rounded-2xl shadow-soft">
+      <Link href={`/producto/${item.slug}`} className="flex-shrink-0 self-center sm:self-auto">
+        <div className="w-28 h-28 sm:w-32 sm:h-32 relative overflow-hidden rounded-xl">
           {item.image ? (
             <Image
               src={getImageUrl(item.image)}
@@ -38,48 +38,48 @@ export function CartItem({ item }: CartItemProps) {
             />
           ) : (
             <div className="w-full h-full bg-sand flex items-center justify-center">
-              <span className="text-green/50 text-lg">🛍️</span>
+              <span className="text-green/50 text-3xl">🛍️</span>
             </div>
           )}
         </div>
       </Link>
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 text-center sm:text-left">
         <Link href={`/producto/${item.slug}`}>
-          <h3 className="text-sm font-medium text-green hover:text-gold transition-colors line-clamp-2">
+          <h3 className="text-lg sm:text-xl font-semibold text-green hover:text-gold transition-colors line-clamp-2">
             {item.name}
           </h3>
         </Link>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-base text-gray-600 mt-1">
           {formatPrice(item.price)}
         </p>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <div className="flex items-center space-x-1">
+      <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
+        <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => handleQuantityChange(item.quantity - 1)}
-            className="h-8 w-8 p-0"
+            className="h-10 w-10 p-0"
           >
-            <Minus className="h-4 w-4" />
+            <Minus className="h-5 w-5" />
           </Button>
-          <span className="w-8 text-center text-sm font-medium">
+          <span className="w-10 text-center text-base font-medium">
             {item.quantity}
           </span>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => handleQuantityChange(item.quantity + 1)}
-            className="h-8 w-8 p-0"
+            className="h-10 w-10 p-0"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-5 w-5" />
           </Button>
         </div>
 
-        <div className="text-right min-w-[80px]">
-          <p className="text-sm font-medium text-green">
+        <div className="text-right min-w-[100px]">
+          <p className="text-lg font-semibold text-green">
             {formatPrice(item.price * item.quantity)}
           </p>
         </div>
@@ -88,9 +88,9 @@ export function CartItem({ item }: CartItemProps) {
           variant="ghost"
           size="sm"
           onClick={() => removeItem(item.id)}
-          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+          className="h-10 w-10 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-5 w-5" />
         </Button>
       </div>
     </div>
