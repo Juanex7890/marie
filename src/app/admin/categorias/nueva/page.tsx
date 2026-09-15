@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Card } from '@/components/ui/Card'
-import { ArrowLeft, X } from 'lucide-react'
+import { ArrowLeft, Upload, X } from 'lucide-react'
 import { createCategory } from '@/lib/actions/categories'
+import { uploadImageFile } from '@/lib/actions/images'
 
 type FormValues = {
   name: string
@@ -22,6 +23,8 @@ type FormValues = {
 export default function NewCategoryPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
   const {
@@ -42,6 +45,27 @@ export default function NewCategoryPage() {
   })
 
   const heroImageUrl = watch('hero_image')
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setError('')
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const result = await uploadImageFile(formData)
+      if (result.success) {
+        setValue('hero_image', result.url)
+      } else {
+        setError(result.error || 'Error al subir la imagen')
+      }
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
 
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true)
@@ -155,10 +179,33 @@ export default function NewCategoryPage() {
               <h3 className="text-lg font-semibold text-green mb-4">Imagen de la Categoria</h3>
               <div className="space-y-4">
                 <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="w-full"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    {isUploading ? 'Subiendo...' : 'Subir imagen desde tu computador'}
+                  </Button>
+                  <p className="text-xs text-green-light mt-1">
+                    JPG, PNG o WebP, máximo 5MB.
+                  </p>
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-green mb-2">URL de la imagen</label>
                   <Input
                     {...register('hero_image')}
-                    placeholder="https://mi-sitio.com/imagen.jpg"
+                    placeholder="O pega un enlace: https://mi-sitio.com/imagen.jpg"
                     className="w-full"
                   />
                   <p className="text-sm text-green-light mt-1">

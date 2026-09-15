@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/Badge'
 import { ArrowLeft, Plus, X, Upload, Save, Trash2 } from 'lucide-react'
 import { updateProduct, deleteProduct, getProduct } from '@/lib/actions/products'
 import { getAllCategories } from '@/lib/actions/categories'
-import { uploadProductImage, deleteProductImage, getProductImages } from '@/lib/actions/images'
+import { uploadProductImage, deleteProductImage, getProductImages, uploadImageFile } from '@/lib/actions/images'
 import { testConnection } from '@/lib/actions/test-connection'
 
 export default function EditProductPage() {
@@ -24,6 +24,8 @@ export default function EditProductPage() {
   const [categories, setCategories] = useState<any[]>([])
   const [error, setError] = useState('')
   const [testResult, setTestResult] = useState('')
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const params = useParams()
   const productId = params.id
@@ -200,6 +202,35 @@ export default function EditProductPage() {
     setNewImageUrls(prev => prev.filter((_, i) => i !== index))
   }
 
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    setIsUploading(true)
+    setError('')
+    try {
+      const uploadedUrls: string[] = []
+      for (const file of files) {
+        const formData = new FormData()
+        formData.append('file', file)
+        const result = await uploadImageFile(formData)
+        if (result.success) {
+          uploadedUrls.push(result.url)
+        } else {
+          setError(result.error || 'Error al subir la imagen')
+        }
+      }
+      if (uploadedUrls.length > 0) {
+        setNewImageUrls(prev => {
+          const withoutBlanks = prev.filter(url => url.trim())
+          return [...withoutBlanks, ...uploadedUrls]
+        })
+      }
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
 
   if (isLoadingData) {
     return (
@@ -414,11 +445,34 @@ export default function EditProductPage() {
                 {/* New Image URLs */}
                 <div className="space-y-3">
                   <h4 className="text-sm font-medium text-green">Añadir nuevas imágenes:</h4>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="w-full"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    {isUploading ? 'Subiendo...' : 'Subir imagen desde tu computador'}
+                  </Button>
+                  <p className="text-xs text-green-light -mt-2">
+                    JPG, PNG o WebP, máximo 5MB por imagen.
+                  </p>
+
                   {newImageUrls.map((url, index) => (
                     <div key={index} className="flex gap-2">
                       <Input
                         type="url"
-                        placeholder="https://ejemplo.com/imagen.jpg"
+                        placeholder="O pega una URL: https://ejemplo.com/imagen.jpg"
                         value={url}
                         onChange={(e) => updateImageUrl(index, e.target.value)}
                         className="flex-1"

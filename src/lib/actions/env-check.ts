@@ -4,6 +4,7 @@ export async function checkEnvironment() {
   const envVars = {
     JWT_SECRET: !!process.env.JWT_SECRET,
     NEXT_PUBLIC_FIREBASE_PROJECT_ID: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
     FIREBASE_SERVICE_ACCOUNT: !!(process.env.FIREBASE_SERVICE_ACCOUNT || process.env.FIREBASE_SERVICE_ACCOUNT_PATH),
     ADMIN_EMAIL: !!process.env.ADMIN_EMAIL,
     ADMIN_PASSWORD: !!process.env.ADMIN_PASSWORD,
