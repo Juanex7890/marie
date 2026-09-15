@@ -1,7 +1,6 @@
 import { App, cert, getApps, initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
-import { getStorage } from 'firebase-admin/storage'
 import fs from 'node:fs'
 
 type ServiceAccount = { project_id: string; client_email: string; private_key: string }
@@ -29,7 +28,6 @@ export function getFirebaseAdminApp(): App {
       clientEmail: serviceAccount.client_email,
       privateKey: serviceAccount.private_key,
     }),
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   })
 
   // Optional fields (e.g. hero_image) are passed through as `undefined` when
@@ -41,4 +39,3 @@ export function getFirebaseAdminApp(): App {
 
 export const firebaseAuth = () => getAuth(getFirebaseAdminApp())
 export const firestore = () => getFirestore(getFirebaseAdminApp())
-export const firebaseStorage = () => getStorage(getFirebaseAdminApp())

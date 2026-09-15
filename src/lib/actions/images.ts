@@ -1,11 +1,36 @@
 'use server'
 
 import { randomUUID } from 'crypto'
+import { v2 as cloudinary } from 'cloudinary'
 import * as db from '@/lib/firebase/db'
 import { requireAdmin } from '@/lib/auth'
-import { firebaseStorage } from '@/lib/firebase/admin'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
+const UPLOAD_TIMEOUT_MS = 20000
+
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error(message)), ms)
+    }),
+  ])
+}
+
+function getCloudinaryClient() {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME
+  const apiKey = process.env.CLOUDINARY_API_KEY
+  const apiSecret = process.env.CLOUDINARY_API_SECRET
+
+  if (!cloudName || !apiKey || !apiSecret) {
+    throw new Error(
+      'Faltan las variables de entorno de Cloudinary (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET)'
+    )
+  }
+
+  cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret, secure: true })
+  return cloudinary
+}
 
 export async function uploadImageFile(formData: FormData) {
   try {
@@ -24,25 +49,25 @@ export async function uploadImageFile(formData: FormData) {
       return { success: false as const, error: 'La imagen no debe superar 5MB' }
     }
 
+    const client = getCloudinaryClient()
     const bytes = Buffer.from(await file.arrayBuffer())
-    const extension = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
-    const path = `uploads/${randomUUID()}.${extension}`
-    const downloadToken = randomUUID()
+    const dataUri = `data:${file.type};base64,${bytes.toString('base64')}`
 
-    const bucket = firebaseStorage().bucket()
-    await bucket.file(path).save(bytes, {
-      contentType: file.type,
-      metadata: {
-        metadata: { firebaseStorageDownloadTokens: downloadToken },
-      },
-    })
+    const result = await withTimeout(
+      client.uploader.upload(dataUri, {
+        folder: 'cojines-marie',
+        public_id: randomUUID(),
+        resource_type: 'image',
+      }),
+      UPLOAD_TIMEOUT_MS,
+      'Tiempo de espera agotado subiendo la imagen a Cloudinary'
+    )
 
-    const url = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(path)}?alt=media&token=${downloadToken}`
-
-    return { success: true as const, url }
+    return { success: true as const, url: result.secure_url }
   } catch (error) {
     console.error('Error uploading image file:', error)
-    return { success: false as const, error: 'Error inesperado al subir la imagen' }
+    const message = error instanceof Error ? error.message : 'Error inesperado al subir la imagen'
+    return { success: false as const, error: message }
   }
 }
 

@@ -21,13 +21,17 @@ interface FlyToCartContextType {
 
 const FlyToCartContext = createContext<FlyToCartContextType | undefined>(undefined)
 
+// Cap how large the flying thumbnail starts, regardless of the source
+// element's real size — otherwise it's the full gallery image on mobile.
+const MAX_START_SIZE = 88
+
 export function FlyToCartProvider({ children }: { children: ReactNode }) {
   const [flyingItems, setFlyingItems] = useState<FlyingItem[]>([])
   const [cartBump, setCartBump] = useState(0)
   const nextId = useRef(0)
 
   const flyToCart = useCallback((source: HTMLElement | null, imageSrc: string) => {
-    if (!source || !imageSrc || typeof window === 'undefined') return
+    if (!source || typeof window === 'undefined') return
 
     const target = Array.from(
       document.querySelectorAll<HTMLElement>('[data-cart-icon-target]')
@@ -40,16 +44,29 @@ export function FlyToCartProvider({ children }: { children: ReactNode }) {
     const startRect = source.getBoundingClientRect()
     const endRect = target.getBoundingClientRect()
 
+    // Prefer the already-rendered <img>'s resolved src so the flying copy
+    // reuses the browser's cached, decoded image instead of re-fetching the
+    // raw (unoptimized) URL from scratch mid-animation.
+    const sourceImg = source.querySelector('img')
+    const resolvedSrc = sourceImg?.currentSrc || sourceImg?.src || imageSrc
+    if (!resolvedSrc) return
+
+    const scale = Math.min(1, MAX_START_SIZE / Math.max(startRect.width, startRect.height))
+    const startWidth = startRect.width * scale
+    const startHeight = startRect.height * scale
+    const centerX = startRect.left + startRect.width / 2
+    const centerY = startRect.top + startRect.height / 2
+
     const id = nextId.current++
     setFlyingItems((prev) => [
       ...prev,
       {
         id,
-        src: imageSrc,
-        startX: startRect.left,
-        startY: startRect.top,
-        startWidth: startRect.width,
-        startHeight: startRect.height,
+        src: resolvedSrc,
+        startX: centerX - startWidth / 2,
+        startY: centerY - startHeight / 2,
+        startWidth,
+        startHeight,
         endX: endRect.left + endRect.width / 2,
         endY: endRect.top + endRect.height / 2,
       },
@@ -95,11 +112,16 @@ export function FlyToCartProvider({ children }: { children: ReactNode }) {
                   position: 'fixed',
                   overflow: 'hidden',
                   boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
-                  backgroundImage: `url(${item.src})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
                 }}
-              />
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.src}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                />
+              </motion.div>
             )
           })}
         </AnimatePresence>
