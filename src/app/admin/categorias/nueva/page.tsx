@@ -61,6 +61,9 @@ export default function NewCategoryPage() {
       } else {
         setError(result.error || 'Error al subir la imagen')
       }
+    } catch (uploadError) {
+      console.error('Error uploading image:', uploadError)
+      setError('Error inesperado al subir la imagen')
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
