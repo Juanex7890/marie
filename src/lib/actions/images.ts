@@ -2,6 +2,7 @@
 
 import { randomUUID } from 'crypto'
 import { v2 as cloudinary } from 'cloudinary'
+import { unstable_rethrow } from 'next/navigation'
 import * as db from '@/lib/firebase/db'
 import { requireAdmin } from '@/lib/auth'
 
@@ -110,6 +111,7 @@ export async function uploadImageFile(formData: FormData) {
 
     return { success: true as const, url: result.secure_url }
   } catch (error) {
+    unstable_rethrow(error)
     console.error(`[upload ${refId}] Unexpected error:`, error)
     return { success: false as const, error: `${extractErrorMessage(error)} [ref: ${refId}]` }
   }
@@ -130,6 +132,8 @@ function extractErrorMessage(error: unknown): string {
 }
 
 export async function uploadProductImage(imageData: string, productId: string, position: number = 0) {
+  const refId = randomUUID().slice(0, 8)
+
   try {
     await requireAdmin()
 
@@ -145,12 +149,15 @@ export async function uploadProductImage(imageData: string, productId: string, p
       url: imageData
     }
   } catch (error) {
-    console.error('Error uploading image:', error)
-    return { success: false as const, error: 'Error inesperado al subir la imagen' }
+    unstable_rethrow(error)
+    console.error(`[saveImage ${refId}] Error saving image record:`, error)
+    return { success: false as const, error: `${extractErrorMessage(error)} [ref: ${refId}]` }
   }
 }
 
 export async function deleteProductImage(imageId: string) {
+  const refId = randomUUID().slice(0, 8)
+
   try {
     await requireAdmin()
 
@@ -163,19 +170,23 @@ export async function deleteProductImage(imageId: string) {
 
     return { success: true as const }
   } catch (error) {
-    console.error('Error deleting image:', error)
-    return { success: false as const, error: 'Error inesperado al eliminar la imagen' }
+    unstable_rethrow(error)
+    console.error(`[deleteImage ${refId}] Error deleting image:`, error)
+    return { success: false as const, error: `${extractErrorMessage(error)} [ref: ${refId}]` }
   }
 }
 
 export async function getProductImages(productId: string) {
+  const refId = randomUUID().slice(0, 8)
+
   try {
     await requireAdmin()
 
     const images = await db.getImages(productId)
     return { success: true as const, images }
   } catch (error) {
-    console.error('Error fetching images:', error)
-    return { success: false as const, error: 'Error inesperado al cargar las imágenes' }
+    unstable_rethrow(error)
+    console.error(`[getImages ${refId}] Error fetching images:`, error)
+    return { success: false as const, error: `${extractErrorMessage(error)} [ref: ${refId}]` }
   }
 }
