@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { CartProvider } from '@/components/cart/CartProvider'
 import { FlyToCartProvider } from '@/components/cart/FlyToCartProvider'
@@ -116,6 +117,7 @@ export default function RootLayout({
             </div>
           </FlyToCartProvider>
         </CartProvider>
+        <SpeedInsights />
       </body>
     </html>
   )
