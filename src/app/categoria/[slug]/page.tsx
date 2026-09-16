@@ -39,6 +39,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: category.name,
     description: category.description || `Descubre nuestra colección de ${category.name.toLowerCase()}`,
+    alternates: {
+      canonical: `/categoria/${slug}`,
+    },
     openGraph: {
       title: category.name,
       description: category.description || `Descubre nuestra colección de ${category.name.toLowerCase()}`,
