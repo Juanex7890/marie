@@ -62,6 +62,8 @@ function getCloudinaryClient() {
 }
 
 export async function uploadImageFile(formData: FormData) {
+  const refId = randomUUID().slice(0, 8)
+
   try {
     await requireAdmin()
 
@@ -70,45 +72,59 @@ export async function uploadImageFile(formData: FormData) {
       return { success: false as const, error: 'No se seleccionó ningún archivo' }
     }
 
+    const fileInfo = `archivo: "${file.name}", tipo: "${file.type || 'desconocido'}", tamaño: ${(file.size / 1024 / 1024).toFixed(2)}MB`
+
     if (!isImageFile(file)) {
-      return { success: false as const, error: 'El archivo debe ser una imagen' }
+      return { success: false as const, error: `El archivo debe ser una imagen (${fileInfo})` }
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return { success: false as const, error: 'La imagen no debe superar 5MB' }
+      return { success: false as const, error: `La imagen no debe superar 5MB (${fileInfo})` }
     }
 
     const client = getCloudinaryClient()
     const bytes = Buffer.from(await file.arrayBuffer())
     const dataUri = `data:${resolveMimeType(file)};base64,${bytes.toString('base64')}`
 
-    const result = await withTimeout(
-      client.uploader.upload(dataUri, {
-        folder: 'cojines-marie',
-        public_id: randomUUID(),
-        resource_type: 'image',
-        // Convert everything (HEIC from iPhones included) to JPEG so it
-        // renders in every browser, not just Safari.
-        format: 'jpg',
-      }),
-      UPLOAD_TIMEOUT_MS,
-      'Tiempo de espera agotado subiendo la imagen a Cloudinary'
-    )
+    let result
+    try {
+      result = await withTimeout(
+        client.uploader.upload(dataUri, {
+          folder: 'cojines-marie',
+          public_id: randomUUID(),
+          resource_type: 'image',
+          // Convert everything (HEIC from iPhones included) to JPEG so it
+          // renders in every browser, not just Safari.
+          format: 'jpg',
+        }),
+        UPLOAD_TIMEOUT_MS,
+        'Tiempo de espera agotado subiendo la imagen a Cloudinary'
+      )
+    } catch (uploadError) {
+      console.error(`[upload ${refId}] Cloudinary rejected the upload (${fileInfo}):`, uploadError)
+      return {
+        success: false as const,
+        error: `${extractErrorMessage(uploadError)} — ${fileInfo} [ref: ${refId}]`,
+      }
+    }
 
     return { success: true as const, url: result.secure_url }
   } catch (error) {
-    console.error('Error uploading image file:', error)
-    return { success: false as const, error: extractErrorMessage(error) }
+    console.error(`[upload ${refId}] Unexpected error:`, error)
+    return { success: false as const, error: `${extractErrorMessage(error)} [ref: ${refId}]` }
   }
 }
 
 function extractErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message
-  // Cloudinary's SDK rejects with a plain object ({ message, http_code }),
-  // not an Error instance, so it needs its own extraction path.
-  if (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') {
-    return (error as any).message
+  if (error && typeof error === 'object') {
+    const err = error as Record<string, unknown>
+    const parts: string[] = []
+    if (typeof err.message === 'string') parts.push(err.message)
+    if (typeof err.http_code === 'number') parts.push(`código ${err.http_code}`)
+    if (typeof err.name === 'string' && err.name !== 'Error') parts.push(err.name)
+    if (parts.length > 0) return parts.join(' — ')
   }
+  if (error instanceof Error) return error.message
   if (typeof error === 'string') return error
   return 'Error inesperado al subir la imagen'
 }
