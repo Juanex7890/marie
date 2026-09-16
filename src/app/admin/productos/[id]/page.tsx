@@ -12,9 +12,10 @@ import { Badge } from '@/components/ui/Badge'
 import { ArrowLeft, Plus, X, Upload, Save, Trash2 } from 'lucide-react'
 import { updateProduct, deleteProduct, getProduct } from '@/lib/actions/products'
 import { getAllCategories } from '@/lib/actions/categories'
-import { uploadProductImage, deleteProductImage, getProductImages, uploadImageFile } from '@/lib/actions/images'
+import { uploadProductImage, deleteProductImage, getProductImages } from '@/lib/actions/images'
 import { testConnection } from '@/lib/actions/test-connection'
 import { withClientTimeout } from '@/lib/utils'
+import { uploadImageDirect } from '@/lib/uploadImage'
 
 const CLIENT_UPLOAD_TIMEOUT_MS = 30000
 
@@ -224,10 +225,8 @@ export default function EditProductPage() {
     try {
       const uploadedUrls: string[] = []
       for (const file of files) {
-        const formData = new FormData()
-        formData.append('file', file)
         const result = await withClientTimeout(
-          uploadImageFile(formData),
+          uploadImageDirect(file),
           CLIENT_UPLOAD_TIMEOUT_MS,
           'La subida tardó demasiado (conexión inestable). Inténtalo de nuevo.'
         )
@@ -485,7 +484,7 @@ export default function EditProductPage() {
                     {isUploading ? 'Subiendo...' : 'Subir imagen desde tu computador'}
                   </Button>
                   <p className="text-xs text-green-light -mt-2">
-                    JPG, PNG o WebP, máximo 5MB por imagen.
+                    JPG, PNG, WebP o HEIC, máximo 10MB por imagen.
                   </p>
 
                   {newImageUrls.map((url, index) => (

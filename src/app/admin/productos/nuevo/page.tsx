@@ -10,10 +10,11 @@ import { Card } from '@/components/ui/Card'
 import { ArrowLeft, Plus, X, Upload } from 'lucide-react'
 import { createProduct } from '@/lib/actions/products'
 import { getAllCategories } from '@/lib/actions/categories'
-import { uploadProductImage, uploadImageFile } from '@/lib/actions/images'
+import { uploadProductImage } from '@/lib/actions/images'
 import { debugProductCreation } from '@/lib/actions/debug'
 import { checkEnvironment } from '@/lib/actions/env-check'
 import { withClientTimeout } from '@/lib/utils'
+import { uploadImageDirect } from '@/lib/uploadImage'
 
 const CLIENT_UPLOAD_TIMEOUT_MS = 30000
 
@@ -136,10 +137,8 @@ export default function NewProductPage() {
     try {
       const uploadedUrls: string[] = []
       for (const file of files) {
-        const formData = new FormData()
-        formData.append('file', file)
         const result = await withClientTimeout(
-          uploadImageFile(formData),
+          uploadImageDirect(file),
           CLIENT_UPLOAD_TIMEOUT_MS,
           'La subida tardó demasiado (conexión inestable). Inténtalo de nuevo.'
         )
@@ -336,7 +335,7 @@ export default function NewProductPage() {
                     {isUploading ? 'Subiendo...' : 'Subir imagen desde tu computador'}
                   </Button>
                   <p className="text-xs text-green-light mt-1">
-                    JPG, PNG o WebP, máximo 5MB por imagen.
+                    JPG, PNG, WebP o HEIC, máximo 10MB por imagen.
                   </p>
                 </div>
 

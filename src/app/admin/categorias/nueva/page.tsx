@@ -9,8 +9,8 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Card } from '@/components/ui/Card'
 import { ArrowLeft, Upload, X } from 'lucide-react'
 import { createCategory } from '@/lib/actions/categories'
-import { uploadImageFile } from '@/lib/actions/images'
 import { withClientTimeout } from '@/lib/utils'
+import { uploadImageDirect } from '@/lib/uploadImage'
 
 const CLIENT_UPLOAD_TIMEOUT_MS = 30000
 
@@ -66,10 +66,8 @@ export default function NewCategoryPage() {
     setIsUploading(true)
     setError('')
     try {
-      const formData = new FormData()
-      formData.append('file', file)
       const result = await withClientTimeout(
-        uploadImageFile(formData),
+        uploadImageDirect(file),
         CLIENT_UPLOAD_TIMEOUT_MS,
         'La subida tardó demasiado (conexión inestable). Inténtalo de nuevo.'
       )
@@ -217,7 +215,7 @@ export default function NewCategoryPage() {
                     {isUploading ? 'Subiendo...' : 'Subir imagen desde tu computador'}
                   </Button>
                   <p className="text-xs text-green-light mt-1">
-                    JPG, PNG o WebP, máximo 5MB.
+                    JPG, PNG, WebP o HEIC, máximo 10MB.
                   </p>
                 </div>
 
