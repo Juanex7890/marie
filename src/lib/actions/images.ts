@@ -66,9 +66,19 @@ export async function uploadImageFile(formData: FormData) {
     return { success: true as const, url: result.secure_url }
   } catch (error) {
     console.error('Error uploading image file:', error)
-    const message = error instanceof Error ? error.message : 'Error inesperado al subir la imagen'
-    return { success: false as const, error: message }
+    return { success: false as const, error: extractErrorMessage(error) }
   }
+}
+
+function extractErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message
+  // Cloudinary's SDK rejects with a plain object ({ message, http_code }),
+  // not an Error instance, so it needs its own extraction path.
+  if (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') {
+    return (error as any).message
+  }
+  if (typeof error === 'string') return error
+  return 'Error inesperado al subir la imagen'
 }
 
 export async function uploadProductImage(imageData: string, productId: string, position: number = 0) {
