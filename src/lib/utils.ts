@@ -20,6 +20,18 @@ export function generateSlug(text: string): string {
     .trim()
 }
 
+// Bounds a client-side call so a stalled mobile connection (common when a
+// server action's response never arrives) can't leave the UI hanging with
+// no feedback — it always resolves or rejects within `ms`.
+export function withClientTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error(message)), ms)
+    }),
+  ])
+}
+
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number

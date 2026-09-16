@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/Button'
@@ -10,6 +10,9 @@ import { Card } from '@/components/ui/Card'
 import { ArrowLeft, Upload, X } from 'lucide-react'
 import { createCategory } from '@/lib/actions/categories'
 import { uploadImageFile } from '@/lib/actions/images'
+import { withClientTimeout } from '@/lib/utils'
+
+const CLIENT_UPLOAD_TIMEOUT_MS = 30000
 
 type FormValues = {
   name: string
@@ -25,6 +28,7 @@ export default function NewCategoryPage() {
   const [error, setError] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const errorRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   const {
@@ -46,16 +50,29 @@ export default function NewCategoryPage() {
 
   const heroImageUrl = watch('hero_image')
 
+  useEffect(() => {
+    if (error) {
+      errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [error])
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file) {
+      setError('No se seleccionó ninguna imagen. Si tu navegador pidió permiso para acceder a tus fotos, revisa que lo hayas concedido e inténtalo de nuevo.')
+      return
+    }
 
     setIsUploading(true)
     setError('')
     try {
       const formData = new FormData()
       formData.append('file', file)
-      const result = await uploadImageFile(formData)
+      const result = await withClientTimeout(
+        uploadImageFile(formData),
+        CLIENT_UPLOAD_TIMEOUT_MS,
+        'La subida tardó demasiado (conexión inestable). Inténtalo de nuevo.'
+      )
       if (result.success) {
         setValue('hero_image', result.url)
       } else {
@@ -111,7 +128,7 @@ export default function NewCategoryPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div ref={errorRef} className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-600">{error}</p>
         </div>
       )}

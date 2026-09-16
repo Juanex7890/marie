@@ -14,6 +14,9 @@ import { updateProduct, deleteProduct, getProduct } from '@/lib/actions/products
 import { getAllCategories } from '@/lib/actions/categories'
 import { uploadProductImage, deleteProductImage, getProductImages, uploadImageFile } from '@/lib/actions/images'
 import { testConnection } from '@/lib/actions/test-connection'
+import { withClientTimeout } from '@/lib/utils'
+
+const CLIENT_UPLOAD_TIMEOUT_MS = 30000
 
 export default function EditProductPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -26,6 +29,7 @@ export default function EditProductPage() {
   const [testResult, setTestResult] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const errorRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const params = useParams()
   const productId = params.id
@@ -92,6 +96,12 @@ export default function EditProductPage() {
       fetchData()
     }
   }, [productId, reset])
+
+  useEffect(() => {
+    if (error) {
+      errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [error])
 
   const onSubmit = async (data: any) => {
     console.log('🚀 Starting product update...')
@@ -204,7 +214,10 @@ export default function EditProductPage() {
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
-    if (files.length === 0) return
+    if (files.length === 0) {
+      setError('No se seleccionó ninguna imagen. Si tu navegador pidió permiso para acceder a tus fotos, revisa que lo hayas concedido e inténtalo de nuevo.')
+      return
+    }
 
     setIsUploading(true)
     setError('')
@@ -213,7 +226,11 @@ export default function EditProductPage() {
       for (const file of files) {
         const formData = new FormData()
         formData.append('file', file)
-        const result = await uploadImageFile(formData)
+        const result = await withClientTimeout(
+          uploadImageFile(formData),
+          CLIENT_UPLOAD_TIMEOUT_MS,
+          'La subida tardó demasiado (conexión inestable). Inténtalo de nuevo.'
+        )
         if (result.success) {
           uploadedUrls.push(result.url)
         } else {
@@ -296,7 +313,7 @@ export default function EditProductPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div ref={errorRef} className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-600">{error}</p>
         </div>
       )}
