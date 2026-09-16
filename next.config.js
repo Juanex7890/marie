@@ -4,6 +4,10 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    // Vercel's free plan caps monthly image-optimization requests; once
+    // exceeded, every new image 402s. Serve images as-is (Cloudinary and
+    // postimg.cc already handle their own sizing/CDN) to avoid that limit.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
