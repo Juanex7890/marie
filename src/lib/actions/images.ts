@@ -8,6 +8,35 @@ import { requireAdmin } from '@/lib/auth'
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 const UPLOAD_TIMEOUT_MS = 20000
 
+const EXTENSION_MIME_TYPES: Record<string, string> = {
+  heic: 'image/heic',
+  heif: 'image/heif',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  webp: 'image/webp',
+  gif: 'image/gif',
+  bmp: 'image/bmp',
+}
+
+function getFileExtension(filename: string): string {
+  return (filename.split('.').pop() || '').toLowerCase()
+}
+
+// iPhones capture photos as HEIC/HEIF, and Safari often reports an empty
+// `file.type` for them on the file input, so MIME sniffing alone isn't
+// reliable — fall back to the filename extension.
+function isImageFile(file: File): boolean {
+  if (file.type.startsWith('image/')) return true
+  if (file.type) return false
+  return getFileExtension(file.name) in EXTENSION_MIME_TYPES
+}
+
+function resolveMimeType(file: File): string {
+  if (file.type) return file.type
+  return EXTENSION_MIME_TYPES[getFileExtension(file.name)] || 'application/octet-stream'
+}
+
 function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return Promise.race([
     promise,
@@ -41,7 +70,7 @@ export async function uploadImageFile(formData: FormData) {
       return { success: false as const, error: 'No se seleccionó ningún archivo' }
     }
 
-    if (!file.type.startsWith('image/')) {
+    if (!isImageFile(file)) {
       return { success: false as const, error: 'El archivo debe ser una imagen' }
     }
 
@@ -51,13 +80,16 @@ export async function uploadImageFile(formData: FormData) {
 
     const client = getCloudinaryClient()
     const bytes = Buffer.from(await file.arrayBuffer())
-    const dataUri = `data:${file.type};base64,${bytes.toString('base64')}`
+    const dataUri = `data:${resolveMimeType(file)};base64,${bytes.toString('base64')}`
 
     const result = await withTimeout(
       client.uploader.upload(dataUri, {
         folder: 'cojines-marie',
         public_id: randomUUID(),
         resource_type: 'image',
+        // Convert everything (HEIC from iPhones included) to JPEG so it
+        // renders in every browser, not just Safari.
+        format: 'jpg',
       }),
       UPLOAD_TIMEOUT_MS,
       'Tiempo de espera agotado subiendo la imagen a Cloudinary'
