@@ -33,7 +33,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
     const source = document.getElementById('product-gallery-main-image') ?? buttonRef.current
 
     if (source && mainImage) {
-      flyToCart(source, getImageUrl(mainImage.file_path))
+      flyToCart(source, getImageUrl(mainImage.file_path, { width: 200 }))
     }
 
     addItem(product)

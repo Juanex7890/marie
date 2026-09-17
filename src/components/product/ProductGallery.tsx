@@ -64,7 +64,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           {orderedImages.map((image, index) => (
             <Image
               key={image.id}
-              src={getImageUrl(image.file_path)}
+              src={getImageUrl(image.file_path, { width: 900 })}
               alt={`${productName} ${index + 1}`}
               fill
               priority={index === 0}
@@ -122,7 +122,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 )}
               >
                 <Image
-                  src={getImageUrl(image.file_path)}
+                  src={getImageUrl(image.file_path, { width: 150 })}
                   alt={`${productName} miniatura ${index + 1}`}
                   fill
                   sizes="(max-width: 768px) 25vw, 12vw"
@@ -172,7 +172,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
           <div className="relative w-full max-w-4xl aspect-[4/3]">
             <Image
-              src={getImageUrl(currentImage.file_path)}
+              src={getImageUrl(currentImage.file_path, { width: 1400 })}
               alt={`${productName} ampliada`}
               fill
               sizes="100vw"

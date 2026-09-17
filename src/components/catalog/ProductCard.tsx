@@ -50,9 +50,10 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         <div ref={imageRef} className="aspect-square relative overflow-hidden rounded-xl mb-4">
           {mainImage ? (
             <Image
-              src={getImageUrl(mainImage.file_path)}
+              src={getImageUrl(mainImage.file_path, { width: 500 })}
               alt={product.name}
               fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, 25vw"
               className="object-cover group-hover:scale-110 transition-transform duration-300"
             />
           ) : (
@@ -110,7 +111,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         className="w-full mt-3"
         onClick={() => {
           if (imageRef.current && mainImage) {
-            flyToCart(imageRef.current, getImageUrl(mainImage.file_path))
+            flyToCart(imageRef.current, getImageUrl(mainImage.file_path, { width: 200 }))
           }
           addItem(product)
           onAddToCart?.(product)

@@ -92,7 +92,7 @@ export default async function HomePage() {
                     <div className="relative aspect-[4/3]">
                       {category.hero_image ? (
                         <Image
-                          src={getImageUrl(category.hero_image)}
+                          src={getImageUrl(category.hero_image, { width: 500 })}
                           alt={category.name}
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-105"

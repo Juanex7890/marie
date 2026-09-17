@@ -40,7 +40,7 @@ export default async function CategoriesPage() {
                 <div className="aspect-video relative overflow-hidden rounded-xl bg-sand">
                   {category.hero_image ? (
                     <img
-                      src={getImageUrl(category.hero_image)}
+                      src={getImageUrl(category.hero_image, { width: 400 })}
                       alt={category.name}
                       className="w-full h-full object-cover"
                     />

@@ -97,6 +97,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+      </head>
       <body className="min-h-screen bg-linen">
         <script
           type="application/ld+json"

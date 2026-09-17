@@ -67,7 +67,7 @@ export default async function ProductsPage() {
                   <div className="w-20 h-20 relative overflow-hidden rounded-lg bg-sand flex-shrink-0">
                     {mainImage ? (
                       <img
-                        src={getImageUrl(mainImage.file_path)}
+                        src={getImageUrl(mainImage.file_path, { width: 160 })}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

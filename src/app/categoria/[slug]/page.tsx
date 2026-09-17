@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: category.name,
       description: category.description || `Descubre nuestra colección de ${category.name.toLowerCase()}`,
-      images: category.hero_image ? [getImageUrl(category.hero_image)] : [],
+      images: category.hero_image ? [getImageUrl(category.hero_image, { width: 1200 })] : [],
     },
   }
 }
@@ -132,9 +132,10 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             {category.hero_image && (
               <div className="aspect-video relative overflow-hidden rounded-2xl">
                 <Image
-                  src={getImageUrl(category.hero_image)}
+                  src={getImageUrl(category.hero_image, { width: 900 })}
                   alt={category.name}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
                 />
               </div>

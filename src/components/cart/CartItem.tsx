@@ -32,9 +32,10 @@ export function CartItem({ item }: CartItemProps) {
           <div className="w-24 h-24 sm:w-32 sm:h-32 relative overflow-hidden rounded-xl">
             {item.image ? (
               <Image
-                src={getImageUrl(item.image)}
+                src={getImageUrl(item.image, { width: 240 })}
                 alt={item.name}
                 fill
+                sizes="128px"
                 className="object-cover"
               />
             ) : (

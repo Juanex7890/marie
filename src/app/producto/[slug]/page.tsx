@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: product.name,
       description: product.description,
-      images: mainImage ? [getImageUrl(mainImage.file_path)] : [],
+      images: mainImage ? [getImageUrl(mainImage.file_path, { width: 1200 })] : [],
     },
   }
 }
@@ -73,7 +73,7 @@ export default async function ProductPage({ params }: PageProps) {
     '@type': 'Product',
     name: product.name,
     description: product.description,
-    image: (product.images ?? []).map((img) => getImageUrl(img.file_path)),
+    image: (product.images ?? []).map((img) => getImageUrl(img.file_path, { width: 1200 })),
     url: `${baseUrl}/producto/${product.slug}`,
     category: product.categories?.name,
     offers: {

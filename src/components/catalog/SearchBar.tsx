@@ -250,9 +250,10 @@ function SearchBarContent({
                     <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl bg-sand">
                       {mainImage ? (
                         <Image
-                          src={getImageUrl(mainImage.file_path)}
+                          src={getImageUrl(mainImage.file_path, { width: 100 })}
                           alt={product.name}
                           fill
+                          sizes="48px"
                           className="object-cover"
                         />
                       ) : (

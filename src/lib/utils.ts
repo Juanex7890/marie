@@ -43,7 +43,28 @@ export function debounce<T extends (...args: any[]) => any>(
   }
 }
 
-export function getImageUrl(filePath?: string | null) {
+// Injects a Cloudinary delivery transformation (auto format/quality, and an
+// optional max width) into the URL's /upload/ segment. This is how we keep
+// images small without paying for Vercel's image-optimization quota
+// (next.config.js sets images.unoptimized: true) — Cloudinary transforms are
+// free and cached at their CDN.
+function withCloudinaryTransform(url: string, width?: number): string {
+  const uploadMarker = '/upload/'
+  const uploadIndex = url.indexOf(uploadMarker)
+  if (!url.includes('res.cloudinary.com') || uploadIndex === -1) {
+    return url
+  }
+
+  const transforms = ['f_auto', 'q_auto']
+  if (width) {
+    transforms.push('c_limit', `w_${width}`)
+  }
+
+  const insertAt = uploadIndex + uploadMarker.length
+  return `${url.slice(0, insertAt)}${transforms.join(',')}/${url.slice(insertAt)}`
+}
+
+export function getImageUrl(filePath?: string | null, options?: { width?: number }) {
   if (!filePath) {
     return ''
   }
@@ -55,7 +76,7 @@ export function getImageUrl(filePath?: string | null) {
 
   // Return early when the path is already a fully-qualified or data URL
   if (/^(?:https?:)?\/\//i.test(trimmedPath) || trimmedPath.startsWith('data:')) {
-    return trimmedPath
+    return withCloudinaryTransform(trimmedPath, options?.width)
   }
 
   const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
