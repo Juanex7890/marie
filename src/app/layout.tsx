@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import Script from 'next/script'
 import './globals.css'
 import { CartProvider } from '@/components/cart/CartProvider'
 import { FlyToCartProvider } from '@/components/cart/FlyToCartProvider'
@@ -80,7 +81,7 @@ const organizationJsonLd = {
   '@type': 'Organization',
   name: 'Cojines Marie',
   url: baseUrl,
-  logo: `${baseUrl}/images/marielogo.png`,
+  logo: `${baseUrl}/images/marielogo.webp`,
 }
 
 const websiteJsonLd = {
@@ -100,6 +101,18 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-X1GZF22LSF"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-X1GZF22LSF');
+          `}
+        </Script>
       </head>
       <body className="min-h-screen bg-linen">
         <script
