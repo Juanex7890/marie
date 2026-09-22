@@ -125,7 +125,7 @@ export default async function AdminDashboard() {
             <Link href="/admin/linktree">
               <Button>Editar Linktree</Button>
             </Link>
-            <a href="/links" target="_blank" rel="noopener noreferrer">
+            <a href="/linktree" target="_blank" rel="noopener noreferrer">
               <Button variant="outline">Ver página</Button>
             </a>
           </div>

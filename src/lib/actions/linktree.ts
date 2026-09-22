@@ -30,7 +30,7 @@ export async function saveLinktreeConfig(config: Omit<db.LinktreeConfig, 'update
     })
 
     revalidatePath('/admin/linktree')
-    revalidatePath('/links')
+    revalidatePath('/linktree')
     return { success: true as const, config: saved }
   } catch (error) {
     console.error('Error saving linktree config:', error)

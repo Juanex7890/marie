@@ -16,11 +16,12 @@ export function Header() {
 
   const navigation = [
     { name: 'Inicio', href: '/' },
+    { name: 'Linktree', href: '/linktree' },
   ]
 
   // The linktree page is a standalone bio-link page meant to be shared on
   // its own (e.g. in an Instagram bio), so it skips the store chrome.
-  if (pathname?.startsWith('/links')) return null
+  if (pathname?.startsWith('/linktree')) return null
 
   return (
     <header className="bg-white shadow-soft sticky top-0 z-40">

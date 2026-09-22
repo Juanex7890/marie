@@ -9,7 +9,7 @@ export function Footer() {
 
   // The linktree page is a standalone bio-link page meant to be shared on
   // its own (e.g. in an Instagram bio), so it skips the store chrome.
-  if (pathname?.startsWith('/links')) return null
+  if (pathname?.startsWith('/linktree')) return null
 
   return (
     <footer className="bg-green text-white">

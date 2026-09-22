@@ -184,7 +184,7 @@ export default function LinktreeAdminPage() {
             Personaliza la página de enlaces que compartes en tus redes sociales
           </p>
         </div>
-        <a href="/links" target="_blank" rel="noopener noreferrer">
+        <a href="/linktree" target="_blank" rel="noopener noreferrer">
           <Button variant="outline">Ver página pública</Button>
         </a>
       </div>
