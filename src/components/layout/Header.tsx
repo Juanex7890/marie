@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Search, Menu, X } from 'lucide-react'
 import { SearchBar } from '@/components/catalog/SearchBar'
 import { CartButton } from '@/components/cart/CartButton'
@@ -11,10 +12,15 @@ import { Dialog } from '@/components/ui/Dialog'
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const pathname = usePathname()
 
   const navigation = [
     { name: 'Inicio', href: '/' },
   ]
+
+  // The linktree page is a standalone bio-link page meant to be shared on
+  // its own (e.g. in an Instagram bio), so it skips the store chrome.
+  if (pathname?.startsWith('/links')) return null
 
   return (
     <header className="bg-white shadow-soft sticky top-0 z-40">
@@ -24,8 +30,8 @@ export function Header() {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center space-x-2">
               <Image
-                src="/images/marielogo.png"
-                alt="Cojines Marie"
+                src="/images/marielogo.webp"
+                alt=""
                 width={32}
                 height={32}
                 className="h-8 w-8 rounded-lg object-contain"
@@ -63,6 +69,7 @@ export function Header() {
             <button
               onClick={() => setSearchOpen(true)}
               className="p-2 text-green hover:text-gold transition-colors"
+              aria-label="Buscar"
             >
               <Search className="h-5 w-5" />
             </button>
@@ -70,6 +77,8 @@ export function Header() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-green hover:text-gold transition-colors"
+              aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? (
                 <X className="h-5 w-5" />

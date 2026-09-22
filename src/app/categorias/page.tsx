@@ -38,7 +38,7 @@ export default async function CategoriasPage() {
                     {category.hero_image ? (
                       <Image
                         src={getImageUrl(category.hero_image, { width: 500 })}
-                        alt={category.name}
+                        alt=""
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                         sizes="(max-width: 768px) 50vw, 25vw"

@@ -21,10 +21,11 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <Image
-          src="/images/heroback.jpg"
+          src="/images/heroback.webp"
           alt="Decoracion de cojines Marie"
           fill
           priority
+          fetchPriority="high"
           sizes="100vw"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -48,12 +49,11 @@ export default async function HomePage() {
                 aria-label="Contactar por WhatsApp"
               >
                 <Image
-                  src="/images/whatsapp.png"
-                  alt="WhatsApp"
+                  src="/images/whatsapp.webp"
+                  alt=""
                   width={24}
                   height={24}
                   className="h-6 w-6 object-contain"
-                  priority
                 />
                 WhatsApp
               </a>
@@ -93,7 +93,7 @@ export default async function HomePage() {
                       {category.hero_image ? (
                         <Image
                           src={getImageUrl(category.hero_image, { width: 500 })}
-                          alt={category.name}
+                          alt=""
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                           sizes="(max-width: 768px) 50vw, 25vw"

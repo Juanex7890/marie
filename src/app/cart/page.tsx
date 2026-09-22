@@ -151,12 +151,11 @@ export default function CartPage() {
                   className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#101828] px-8 py-4 text-lg font-medium text-white transition duration-200 hover:bg-[#0C1526]"
                 >
                   <Image
-                    src="/images/whatsapp.png"
-                    alt="WhatsApp"
+                    src="/images/whatsapp.webp"
+                    alt=""
                     width={24}
                     height={24}
                     className="h-6 w-6 object-contain"
-                    priority
                   />
                   Finalizar por WhatsApp
                 </a>

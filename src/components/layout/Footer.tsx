@@ -1,7 +1,16 @@
+'use client'
+
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { Instagram, Phone } from 'lucide-react'
 
 export function Footer() {
+  const pathname = usePathname()
+
+  // The linktree page is a standalone bio-link page meant to be shared on
+  // its own (e.g. in an Instagram bio), so it skips the store chrome.
+  if (pathname?.startsWith('/links')) return null
+
   return (
     <footer className="bg-green text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -10,12 +19,11 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Image
-                src="/images/marielogo.png"
-                alt="Cojines Marie"
+                src="/images/marielogo.webp"
+                alt=""
                 width={32}
                 height={32}
                 className="h-8 w-8 rounded-lg object-contain"
-                priority
               />
               <span className="text-xl font-serif font-semibold">Cojines Marie</span>
             </div>
@@ -33,19 +41,18 @@ export function Footer() {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://wa.me/316388242"
+                href="https://wa.me/3166388242"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-10 w-10 items-center justify-center transition hover:scale-105"
                 aria-label="Contactar por WhatsApp"
               >
                 <Image
-                  src="/images/whatsapp.png"
-                  alt="WhatsApp"
+                  src="/images/whatsapp.webp"
+                  alt=""
                   width={40}
                   height={40}
                   className="h-10 w-10 object-contain drop-shadow-sm"
-                  priority
                 />
               </a>
             </div>

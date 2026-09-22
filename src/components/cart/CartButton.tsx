@@ -2,7 +2,6 @@
 
 import { ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { useCart } from './CartProvider'
 import { useFlyToCart } from './FlyToCartProvider'
 import { Badge } from '@/components/ui/Badge'
@@ -13,14 +12,11 @@ export function CartButton() {
   const totalItems = getTotalItems()
 
   return (
-    <Link href="/cart" className="relative">
-      <motion.div
+    <Link href="/cart" className="relative" aria-label="Ver carrito">
+      <div
         key={cartBump}
         data-cart-icon-target
-        initial={{ scale: 1 }}
-        animate={{ scale: [1, 1.3, 0.9, 1] }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="p-2 hover:bg-sand/50 rounded-xl transition-colors"
+        className="p-2 hover:bg-sand/50 rounded-xl transition-colors animate-cart-bump"
       >
         <ShoppingCart className="h-6 w-6 text-green" />
         {totalItems > 0 && (
@@ -31,7 +27,7 @@ export function CartButton() {
             {totalItems}
           </Badge>
         )}
-      </motion.div>
+      </div>
     </Link>
   )
 }

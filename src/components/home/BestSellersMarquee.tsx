@@ -37,6 +37,7 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
   const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const startAutoScrollRef = useRef<() => void>(() => {})
   const stopAutoScrollRef = useRef<() => void>(() => {})
+  const halfWidthRef = useRef(0)
 
   const uniqueProducts = useMemo(() => {
     const seen = new Map<string, Product>()
@@ -67,6 +68,15 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
 
     let running = false
 
+    // Cached instead of re-read every animation frame: reading scrollWidth
+    // forces a synchronous layout, and step() below was doing that ~60
+    // times a second right before writing scrollLeft.
+    halfWidthRef.current = container.scrollWidth / 2
+    const resizeObserver = new ResizeObserver(() => {
+      halfWidthRef.current = container.scrollWidth / 2
+    })
+    resizeObserver.observe(container)
+
     const clearResumeTimeout = () => {
       if (resumeTimeoutRef.current) {
         clearTimeout(resumeTimeoutRef.current)
@@ -79,7 +89,7 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
         return
       }
 
-      const halfWidth = container.scrollWidth / 2
+      const halfWidth = halfWidthRef.current
       container.scrollLeft += AUTO_SCROLL_SPEED
 
       if (container.scrollLeft >= halfWidth) {
@@ -118,8 +128,7 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
     }
 
     const setInitialScroll = () => {
-      const halfWidth = container.scrollWidth / 2
-      container.scrollLeft = halfWidth / 2
+      container.scrollLeft = halfWidthRef.current / 2
     }
 
     requestAnimationFrame(setInitialScroll)
@@ -132,7 +141,7 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
     }
 
     const handleScroll = () => {
-      const halfWidth = container.scrollWidth / 2
+      const halfWidth = halfWidthRef.current
 
       if (container.scrollLeft >= halfWidth) {
         container.scrollLeft -= halfWidth
@@ -163,6 +172,7 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
     return () => {
       stop()
       clearResumeTimeout()
+      resizeObserver.disconnect()
       container.removeEventListener('scroll', handleScroll)
       container.removeEventListener('mouseenter', handlePointerDown)
       container.removeEventListener('mouseleave', handlePointerUp)
@@ -230,17 +240,26 @@ export function BestSellersMarquee({ products }: BestSellersMarqueeProps) {
           role="list"
           aria-label="Productos más vendidos"
         >
-          {marqueeProducts.map((product, index) => (
-            <div
-              key={`${product.id}-${index}`}
-              data-card
-              className="flex-shrink-0 w-[220px] sm:w-[260px] lg:w-[280px]"
-              role="listitem"
-              aria-hidden={index >= uniqueProducts.length}
-            >
-              <ProductCard product={product} />
-            </div>
-          ))}
+          {marqueeProducts.map((product, index) => {
+            const isDuplicate = index >= uniqueProducts.length
+            return (
+              <div
+                key={`${product.id}-${index}`}
+                data-card
+                className="flex-shrink-0 w-[220px] sm:w-[260px] lg:w-[280px]"
+                role="listitem"
+                aria-hidden={isDuplicate}
+                // Duplicated cards exist only so the auto-scroll can loop
+                // seamlessly — aria-hidden alone hides them from screen
+                // readers but NOT from keyboard tab order, since they still
+                // contain a real link and an "Añadir" button. `inert` also
+                // removes them from tab order and pointer interaction.
+                {...(isDuplicate ? { inert: true } : {})}
+              >
+                <ProductCard product={product} />
+              </div>
+            )
+          })}
         </div>
 
         {shouldLoop && (

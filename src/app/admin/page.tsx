@@ -85,7 +85,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-green mb-4">Gestión de Productos</h3>
           <p className="text-green-light mb-4">
@@ -113,6 +113,21 @@ export default async function AdminDashboard() {
             <Link href="/admin/categorias/nueva">
               <Button variant="outline">Nueva Categoría</Button>
             </Link>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold text-green mb-4">Linktree</h3>
+          <p className="text-green-light mb-4">
+            Personaliza tu página de enlaces (colores, imágenes y enlaces)
+          </p>
+          <div className="flex space-x-3">
+            <Link href="/admin/linktree">
+              <Button>Editar Linktree</Button>
+            </Link>
+            <a href="/links" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline">Ver página</Button>
+            </a>
           </div>
         </Card>
       </div>

@@ -79,3 +79,52 @@ export async function getImages(productId: string) { return (await imagesFor([pr
 export async function addImage(input: Omit<ProductImage, 'id' | 'created_at'>) { const now = new Date().toISOString(); const ref = firestore().collection('product_images').doc(); const image = { ...input, id: ref.id, created_at: now }; await ref.set(image); return image }
 export async function getImage(id: string) { const doc = await firestore().collection('product_images').doc(id).get(); return doc.exists ? data<ProductImage>(doc) : null }
 export async function deleteImage(id: string) { await firestore().collection('product_images').doc(id).delete() }
+
+export interface LinktreeLink {
+  id: string; title: string; url: string; imageUrl?: string; active: boolean; position: number
+}
+export interface LinktreeConfig {
+  displayName: string; bio: string; avatarUrl: string
+  backgroundType: 'solid' | 'gradient' | 'image'
+  backgroundColor: string; backgroundGradientFrom: string; backgroundGradientTo: string; backgroundImageUrl: string
+  buttonColor: string; buttonTextColor: string; buttonShape: 'rounded' | 'pill' | 'square'
+  textColor: string; fontFamily: 'sans' | 'serif'
+  links: LinktreeLink[]
+  updated_at: string
+}
+
+const DEFAULT_LINKTREE_CONFIG: LinktreeConfig = {
+  displayName: 'Cojines Marie',
+  bio: 'Almohadas y cojines decorativos artesanales',
+  avatarUrl: '/images/marielogo.webp',
+  backgroundType: 'gradient',
+  backgroundColor: '#FAF6EF',
+  backgroundGradientFrom: '#FAF6EF',
+  backgroundGradientTo: '#DCCBB3',
+  backgroundImageUrl: '',
+  buttonColor: '#264733',
+  buttonTextColor: '#FFFFFF',
+  buttonShape: 'pill',
+  textColor: '#264733',
+  fontFamily: 'sans',
+  links: [
+    { id: 'default-catalogo', title: 'Ver catálogo', url: '/', active: true, position: 0 },
+    { id: 'default-whatsapp', title: 'WhatsApp', url: 'https://wa.me/3166388242', active: true, position: 1 },
+    { id: 'default-instagram', title: 'Instagram', url: 'https://instagram.com/cojinesdecorativos_marie', active: true, position: 2 },
+  ],
+  updated_at: new Date(0).toISOString(),
+}
+
+const LINKTREE_DOC = () => firestore().collection('site_settings').doc('linktree')
+
+export async function getLinktreeConfig(): Promise<LinktreeConfig> {
+  const doc = await LINKTREE_DOC().get()
+  if (!doc.exists) return DEFAULT_LINKTREE_CONFIG
+  return { ...DEFAULT_LINKTREE_CONFIG, ...doc.data() } as LinktreeConfig
+}
+
+export async function saveLinktreeConfig(config: Omit<LinktreeConfig, 'updated_at'>): Promise<LinktreeConfig> {
+  const full: LinktreeConfig = { ...config, updated_at: new Date().toISOString() }
+  await LINKTREE_DOC().set(full)
+  return full
+}

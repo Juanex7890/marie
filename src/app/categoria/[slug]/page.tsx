@@ -133,7 +133,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               <div className="aspect-video relative overflow-hidden rounded-2xl">
                 <Image
                   src={getImageUrl(category.hero_image, { width: 900 })}
-                  alt={category.name}
+                  alt=""
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"

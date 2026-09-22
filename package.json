@@ -28,6 +28,12 @@
       "jose": "^5.2.0"
     }
   },
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "not ie 11",
+    ">0.2%"
+  ],
   "devDependencies": {
     "@eslint/config-array": "^0.18.0",
     "@eslint/js": "^9.37.0",

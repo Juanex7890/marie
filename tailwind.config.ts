@@ -18,8 +18,8 @@ const config: Config = {
         'green-dark': '#1A2E1F',
       },
       fontFamily: {
-        serif: ['Playfair Display', 'serif'],
-        sans: ['Inter', 'sans-serif'],
+        serif: ['var(--font-playfair)', 'serif'],
+        sans: ['var(--font-inter)', 'sans-serif'],
       },
       boxShadow: {
         'soft': '0 4px 20px rgba(0, 0, 0, 0.08)',
@@ -29,6 +29,7 @@ const config: Config = {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
         'marquee': 'marquee var(--marquee-duration, 32s) linear infinite',
+        'cart-bump': 'cartBump 0.4s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -42,6 +43,12 @@ const config: Config = {
         marquee: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
+        },
+        cartBump: {
+          '0%': { transform: 'scale(1)' },
+          '30%': { transform: 'scale(1.3)' },
+          '60%': { transform: 'scale(0.9)' },
+          '100%': { transform: 'scale(1)' },
         },
       },
     },

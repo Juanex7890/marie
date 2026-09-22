@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
-import { LogOut, Home, Package, Tag, BarChart3 } from 'lucide-react'
+import { LogOut, Home, Package, Tag, BarChart3, Link2 } from 'lucide-react'
 
 export function AdminHeader() {
   const router = useRouter()
@@ -17,6 +17,7 @@ export function AdminHeader() {
     { name: 'Dashboard', href: '/admin', icon: BarChart3 },
     { name: 'Productos', href: '/admin/productos', icon: Package },
     { name: 'Categorías', href: '/admin/categorias', icon: Tag },
+    { name: 'Linktree', href: '/admin/linktree', icon: Link2 },
   ]
 
   return (

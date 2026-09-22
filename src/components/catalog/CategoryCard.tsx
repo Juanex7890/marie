@@ -24,7 +24,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
           {category.hero_image ? (
             <Image
               src={getImageUrl(category.hero_image, { width: 500 })}
-              alt={category.name}
+              alt=""
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, 25vw"
               className="object-cover group-hover:scale-110 transition-transform duration-300"
